@@ -2,7 +2,8 @@ import type { MetadataRoute } from 'next'
 import { db } from '@/lib/db'
 import { SITE } from '@/lib/site'
 
-export const revalidate = 3600
+// Se genera al pedirlo (no en el build) para que siempre tenga los productos actuales
+export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [sports, products] = await Promise.all([
