@@ -18,6 +18,14 @@ npm run dev                  # http://localhost:3000
 Las fotos de `public/` ya están en el repo. Si se agregan fotos nuevas a la carpeta local `Imagenes/` (no se sube al repo),
 se regeneran con `npm run images`.
 
+## Despliegue en Vercel
+
+1. Importar el repo en Vercel (framework: Next.js, sin cambios en build).
+2. Variables de entorno (Settings → Environment Variables), copiadas de `.env.local`:
+   `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `AUTH_SECRET`.
+3. La región de las funciones queda en `iad1` (Washington) por `vercel.json`, al lado de la base de Neon (us-east-1).
+4. Mientras sea demo no se indexa en Google. Para lanzarla: `SITE_INDEXABLE=true` y `NEXT_PUBLIC_SITE_URL` con el dominio real.
+
 ## Estructura
 
 ```

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Barlow_Condensed, Inter } from 'next/font/google'
-import { SITE } from '@/lib/site'
+import { INDEXABLE, SITE } from '@/lib/site'
 import './globals.css'
 
 const barlow = Barlow_Condensed({ subsets: ['latin'], weight: ['600', '700', '800', '900'], style: ['normal', 'italic'], variable: '--font-barlow', display: 'swap' })
@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   description: SITE.description,
   openGraph: { type: 'website', locale: 'es_AR', siteName: 'Yaguá', images: ['/sports/padel-2.webp'] },
   icons: { icon: '/brand/yagua-logo.svg' },
+  robots: INDEXABLE ? undefined : { index: false, follow: false },
 }
 
 export const viewport: Viewport = { themeColor: '#1b181c' }

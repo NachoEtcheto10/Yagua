@@ -1,9 +1,15 @@
 // Datos de la tienda y reglas comerciales. Un solo lugar para cambiarlos.
 // TODO: confirmar con el cliente dirección, teléfono, redes, CUIT y montos.
 
+// En Vercel, si no se define NEXT_PUBLIC_SITE_URL, se usa el dominio de producción del proyecto
+const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null
+
+/** Mientras sea demo, la tienda no aparece en Google. Para publicarla: SITE_INDEXABLE=true en Vercel. */
+export const INDEXABLE = process.env.SITE_INDEXABLE === 'true'
+
 export const SITE = {
   name: 'Yaguá',
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  url: process.env.NEXT_PUBLIC_SITE_URL || vercelUrl || 'http://localhost:3000',
   description:
     'Indumentaria y equipamiento deportivo de Concepción del Uruguay: running, hockey, pádel, tenis, trekking, golf y King Fishing.',
   city: 'Concepción del Uruguay, Entre Ríos',
