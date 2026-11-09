@@ -1,0 +1,434 @@
+// Yaguá — esquema de base de datos (PostgreSQL en Neon)
+// Migraciones: npx prisma migrate dev   (usa DATABASE_URL_UNPOOLED, ver prisma.config.ts)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────────── Usuarios y auth (Auth.js)
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  phone         String?
+  role          Role      @default(CUSTOMER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts  Account[]
+  sessions  Session[]
+  addresses Address[]
+  orders    Order[]
+  favorites Favorite[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Address {
+  id         String  @id @default(cuid())
+  userId     String
+  label      String? // "Casa", "Trabajo"
+  street     String
+  number     String
+  apartment  String?
+  city       String
+  province   String
+  postalCode String
+  isDefault  Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ───────────────────────────── Catálogo
+
+enum Gender {
+  HOMBRE
+  MUJER
+  UNISEX
+  NINOS
+}
+
+enum ProductTag {
+  NUEVO
+  OFERTA
+  ULTIMAS_UNIDADES
+  DESTACADO
+}
+
+model Sport {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  tagline     String?
+  description String?
+  heroImage   String
+  cardImage   String
+  /// Sub-landing con identidad propia (King Fishing)
+  isSubBrand  Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  active      Boolean  @default(true)
+
+  categories Category[]
+  products   Product[]
+}
+
+model Category {
+  id        String  @id @default(cuid())
+  slug      String
+  name      String
+  image     String?
+  sportId   String
+  sortOrder Int     @default(0)
+
+  sport    Sport     @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([sportId, slug])
+}
+
+model Brand {
+  id       String    @id @default(cuid())
+  slug     String    @unique
+  name     String
+  logo     String?
+  products Product[]
+}
+
+model Product {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  name        String
+  description String
+  /// Lista de especificaciones: [{ "label": "Material", "value": "Poliéster" }]
+  specs       Json         @default("[]")
+  /// Precio de lista con IVA incluido, en pesos
+  price       Int
+  /// Precio de oferta (si existe, es el que se cobra)
+  salePrice   Int?
+  gender      Gender       @default(UNISEX)
+  tags        ProductTag[]
+  sizeGuide   String?      // clave de la guía de talles: "indumentaria", "calzado", "paletas"
+  videoUrl    String?
+  active      Boolean      @default(true)
+  sportId     String
+  categoryId  String
+  brandId     String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  /// Ventas acumuladas, para ordenar por "lo más vendido"
+  soldCount   Int          @default(0)
+
+  sport     Sport            @relation(fields: [sportId], references: [id])
+  category  Category         @relation(fields: [categoryId], references: [id])
+  brand     Brand            @relation(fields: [brandId], references: [id])
+  variants  ProductVariant[]
+  images    ProductImage[]
+  favorites Favorite[]
+  orderItems OrderItem[]
+  ambassadors Ambassador[] @relation("AmbassadorFavorites")
+
+  @@index([sportId, categoryId])
+  @@index([active, createdAt])
+}
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String
+  sku       String  @unique
+  size      String  // "M", "42", "Único"
+  color     String  // "Negro"
+  colorHex  String  // "#1B181C"
+  stock     Int     @default(0)
+
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@unique([productId, size, color])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  url       String
+  alt       String
+  /// Si está, la foto corresponde a ese color
+  color     String?
+  sortOrder Int     @default(0)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Favorite {
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
+}
+
+// ───────────────────────────── Pedidos y pagos
+
+enum OrderStatus {
+  PENDING          // creado, esperando pago
+  PAID             // pago aprobado
+  PREPARING
+  SHIPPED
+  READY_FOR_PICKUP
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum ShippingMethod {
+  HOME_DELIVERY
+  STORE_PICKUP
+}
+
+enum PaymentMethod {
+  MERCADOPAGO
+  BANK_TRANSFER
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  REFUNDED
+}
+
+model Order {
+  id             String         @id @default(cuid())
+  number         Int            @unique @default(autoincrement())
+  userId         String?
+  email          String
+  customerName   String
+  phone          String
+  dni            String?
+  status         OrderStatus    @default(PENDING)
+  shippingMethod ShippingMethod
+  /// Dirección de envío (copia al momento de comprar)
+  shippingAddress Json?
+  paymentMethod  PaymentMethod
+  /// Montos en pesos, calculados en el servidor
+  subtotal       Int
+  discount       Int            @default(0)
+  shippingCost   Int            @default(0)
+  total          Int
+  couponCode     String?
+  notes          String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  user     User?       @relation(fields: [userId], references: [id])
+  items    OrderItem[]
+  payments Payment[]
+
+  @@index([status, createdAt])
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  productId   String
+  variantId   String
+  /// Copia de los datos al comprar (si el producto cambia, el pedido no)
+  productName String
+  size        String
+  color       String
+  image       String?
+  unitPrice   Int
+  quantity    Int
+
+  order   Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product        @relation(fields: [productId], references: [id])
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+}
+
+model Payment {
+  id         String        @id @default(cuid())
+  orderId    String
+  method     PaymentMethod
+  status     PaymentStatus @default(PENDING)
+  amount     Int
+  /// Id del pago en Mercado Pago
+  externalId String?       @unique
+  /// Id de la preferencia de Checkout Pro
+  preferenceId String?
+  raw        Json?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
+model Coupon {
+  id          String       @id @default(cuid())
+  code        String       @unique
+  type        DiscountType
+  value       Int
+  minPurchase Int          @default(0)
+  maxUses     Int?
+  usedCount   Int          @default(0)
+  startsAt    DateTime?
+  endsAt      DateTime?
+  active      Boolean      @default(true)
+}
+
+// ───────────────────────────── Campañas y temporadas
+
+model Campaign {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  title         String
+  subtitle      String?
+  ctaLabel      String?
+  ctaHref       String?
+  image         String
+  /// Descuento automático (opcional) sobre un deporte/categoría
+  discountType  DiscountType?
+  discountValue Int?
+  sportId       String?
+  categoryId    String?
+  startsAt      DateTime
+  endsAt        DateTime
+  active        Boolean       @default(true)
+  showOnHome    Boolean       @default(true)
+}
+
+// ───────────────────────────── Personalizados
+
+enum CustomOrderStatus {
+  NEW
+  QUOTED
+  ACCEPTED
+  IN_PRODUCTION
+  DELIVERED
+  CANCELLED
+}
+
+model CustomOrder {
+  id          String            @id @default(cuid())
+  teamName    String
+  contactName String
+  email       String
+  phone       String
+  garment     String            // "camiseta", "musculosa"...
+  /// Colores elegidos: { primary, secondary }
+  colors      Json
+  logoUrl     String?
+  /// Jugadores: [{ name, number, size }]
+  players     Json
+  quantity    Int
+  estimate    Int?
+  notes       String?
+  status      CustomOrderStatus @default(NEW)
+  createdAt   DateTime          @default(now())
+}
+
+// ───────────────────────────── Comunidad
+
+model Ambassador {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  name      String
+  sport     String
+  bio       String
+  photo     String
+  instagram String?
+  sortOrder Int       @default(0)
+  favorites Product[] @relation("AmbassadorFavorites")
+}
+
+model Player {
+  id        String @id @default(cuid())
+  name      String
+  club      String
+  sport     String
+  photo     String
+  sortOrder Int    @default(0)
+}
+
+model Sponsor {
+  id          String  @id @default(cuid())
+  name        String
+  kind        String  // "Club", "Evento"
+  logo        String?
+  url         String?
+  sortOrder   Int     @default(0)
+}
+
+model Association {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  logo        String?
+  url         String?
+  sortOrder   Int     @default(0)
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}

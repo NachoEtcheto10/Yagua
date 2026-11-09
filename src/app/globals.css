@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* Tokens de marca Yaguá (sacados del logo). Usar siempre estas clases:
+   bg-brand-primary, text-brand-secondary, border-brand-accent, etc. */
+@theme {
+  --color-brand-primary: #1b181c;   /* negro del logo */
+  --color-brand-secondary: #bcd637; /* verde lima (ojo izquierdo) */
+  --color-brand-accent: #ee3164;    /* rosa fucsia (ojo derecho) */
+  --color-brand-ink: #1b181c;
+  --color-brand-paper: #ffffff;
+  --color-brand-mist: #f3f3f1;      /* fondos suaves */
+  --color-brand-line: #e4e4e0;
+  --color-brand-muted: #6d6b6f;
+
+  /* King Fishing: identidad propia dentro del sitio */
+  --color-kf-deep: #0b2a3a;
+  --color-kf-water: #12506b;
+  --color-kf-gold: #e7b74a;
+
+  --font-display: var(--font-barlow), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-cart-bump: cart-bump 0.5s ease-out;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes cart-bump {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.3) rotate(-8deg); }
+    60% { transform: scale(0.92) rotate(4deg); }
+  }
+}
+
+@layer base {
+  html { -webkit-tap-highlight-color: transparent; }
+  body { @apply bg-brand-paper font-sans text-brand-ink antialiased; }
+  :focus-visible { outline: 2px solid var(--color-brand-accent); outline-offset: 2px; }
+}
+
+@layer utilities {
+  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .text-balance { text-wrap: balance; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
