@@ -71,16 +71,16 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
   return (
     <header className="sticky top-0 z-40 border-b border-brand-line bg-white" onMouseLeave={() => setHover(null)}>
       <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-4 px-4 sm:px-6 lg:h-[72px] lg:px-10">
-        <button type="button" onClick={() => setMobile(true)} className="-ml-2 grid h-10 w-10 place-items-center lg:hidden" aria-label="Abrir menú">
+        <button type="button" onClick={() => setMobile(true)} className="-ml-2 grid h-10 w-10 place-items-center xl:hidden" aria-label="Abrir menú">
           <Menu size={24} />
         </button>
 
-        <Link href="/" className="mx-auto shrink-0 lg:mx-0" aria-label="Yaguá, ir al inicio">
+        <Link href="/" className="mx-auto shrink-0 xl:mx-0" aria-label="Yaguá, ir al inicio">
           <Image src="/brand/yagua-logo.svg" alt="Yaguá" width={104} height={45} priority className="h-10 w-auto lg:h-11" />
         </Link>
 
         {/* Navegación por deporte (escritorio) */}
-        <nav className="hidden flex-1 justify-center lg:flex" aria-label="Deportes">
+        <nav className="hidden flex-1 justify-center xl:flex" aria-label="Deportes">
           <ul className="flex items-stretch">
             {sports.map((s) => (
               <li key={s.slug} onMouseEnter={() => setHover(s.slug)}>
@@ -88,7 +88,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
                   href={`/${s.slug}`}
                   onFocus={() => setHover(s.slug)}
                   className={cn(
-                    'relative flex h-[72px] items-center whitespace-nowrap px-2.5 font-display text-[15px] font-bold uppercase tracking-wide xl:px-4',
+                    'relative flex h-[72px] items-center whitespace-nowrap px-2 font-display text-[15px] font-bold uppercase tracking-wide 2xl:px-3',
                     "after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:origin-left after:scale-x-0 after:bg-brand-ink after:transition after:content-['']",
                     (hover === s.slug || pathname.startsWith(`/${s.slug}`)) && 'after:scale-x-100',
                     s.isSubBrand && 'text-kf-water',
@@ -103,7 +103,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
                 <Link
                   href={l.href}
                   className={cn(
-                    'flex h-[72px] items-center whitespace-nowrap px-2.5 font-display text-[15px] font-bold uppercase tracking-wide xl:px-4',
+                    'flex h-[72px] items-center whitespace-nowrap px-2 font-display text-[15px] font-bold uppercase tracking-wide 2xl:px-3',
                     l.href === '/ofertas' && 'text-brand-accent',
                   )}
                 >
@@ -115,10 +115,10 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
         </nav>
 
         <div className="flex items-center gap-1 lg:gap-2">
-          <div className="hidden w-52 xl:block">
+          <div className="hidden w-52 2xl:block">
             <SearchBox />
           </div>
-          <button type="button" onClick={() => setSearchOpen((v) => !v)} className="grid h-10 w-10 place-items-center xl:hidden" aria-label="Buscar">
+          <button type="button" onClick={() => setSearchOpen((v) => !v)} className="grid h-10 w-10 place-items-center 2xl:hidden" aria-label="Buscar">
             <Search size={22} />
           </button>
           <Link href={userName ? '/cuenta' : '/ingresar'} className="hidden h-10 w-10 place-items-center sm:grid" aria-label={userName ? `Mi cuenta (${userName})` : 'Ingresar'}>
@@ -134,7 +134,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
       {/* Buscador desplegable (celular y tablet) */}
       <AnimatePresence>
         {searchOpen && (
-          <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden border-t border-brand-line xl:hidden">
+          <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden border-t border-brand-line 2xl:hidden">
             <div className="px-4 py-3 sm:px-6">
               <SearchBox autoFocus onNavigate={() => setSearchOpen(false)} />
             </div>
@@ -151,7 +151,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18 }}
-            className="absolute inset-x-0 top-full hidden border-b border-brand-line bg-white shadow-xl lg:block"
+            className="absolute inset-x-0 top-full hidden border-b border-brand-line bg-white shadow-xl xl:block"
             onMouseEnter={() => setHover(hovered.slug)}
           >
             <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_1fr_1.3fr] gap-10 px-10 py-10">
@@ -196,7 +196,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
       {/* Menú lateral (celular) */}
       <AnimatePresence>
         {mobile && (
-          <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="fixed inset-0 z-50 xl:hidden">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobile(false)} className="absolute inset-0 bg-black/50" />
             <motion.aside
               initial={{ x: '-100%' }}

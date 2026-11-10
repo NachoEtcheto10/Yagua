@@ -1,4 +1,4 @@
-import { Clock, Mail, MapPin, MessageCircle } from 'lucide-react'
+import { Clock, MapPin, MessageCircle } from 'lucide-react'
 import { FacebookIcon, InstagramIcon } from '@/components/ui/SocialIcons'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -58,7 +58,7 @@ export function Footer({ sports }: { sports: NavSport[] }) {
             <ul className="mt-4 space-y-3 text-sm text-white/75">
               <li className="flex gap-2"><MapPin size={18} className="mt-0.5 shrink-0 text-brand-secondary" /> {SITE.address} · {SITE.city}</li>
               <li className="flex gap-2"><Clock size={18} className="mt-0.5 shrink-0 text-brand-secondary" /> {SITE.hours}</li>
-              <li className="flex gap-2"><Mail size={18} className="mt-0.5 shrink-0 text-brand-secondary" /> <a href={`mailto:${SITE.email}`} className="hover:text-white">{SITE.email}</a></li>
+              <li className="flex gap-2"><MessageCircle size={18} className="mt-0.5 shrink-0 text-brand-secondary" /> <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener" className="hover:text-white">{SITE.whatsappDisplay}</a></li>
             </ul>
             <div className="mt-4 aspect-[16/9] overflow-hidden bg-white/10">
               <iframe

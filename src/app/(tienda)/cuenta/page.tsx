@@ -24,7 +24,9 @@ export default async function AccountPage() {
   const session = await auth()
   if (!session?.user) redirect('/ingresar?volver=/cuenta')
   const orders = await db.order.findMany({
-    where: { OR: [{ userId: session.user.id }, { email: session.user.email ?? '' }] },
+    // Solo los pedidos de esta cuenta. (Los de invitado con el mismo e-mail no: el e-mail no está verificado.)
+    // TODO Fase 3: con verificación de e-mail, sumar los pedidos hechos como invitado.
+    where: { userId: session.user.id },
     orderBy: { createdAt: 'desc' },
     include: { items: true },
     take: 30,
@@ -44,6 +46,7 @@ export default async function AccountPage() {
       <nav className="mt-8 flex gap-4 text-sm font-semibold">
         <span className="border-b-2 border-brand-ink pb-1">Mis pedidos</span>
         <Link href="/favoritos" className="pb-1 text-brand-muted hover:text-brand-ink">Favoritos</Link>
+        {session.user.role === 'ADMIN' && <Link href="/admin" className="pb-1 text-brand-accent hover:text-brand-ink">Panel de administración →</Link>}
         {/* TODO Fase 2: datos personales y direcciones guardadas */}
       </nav>
       {orders.length === 0 ? (

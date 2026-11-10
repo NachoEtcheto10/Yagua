@@ -1,8 +1,11 @@
 // Datos de prueba para la demo de Yaguá.
 // Uso: npx prisma db seed   (borra y vuelve a cargar catálogo, comunidad y campañas)
 //
-// TODO: los productos sin foto propia, embajadores, jugadores, sponsors y asociaciones
-// son de EJEMPLO (fotos de stock de Unsplash y nombres inventados). Reemplazar con datos reales.
+// Catálogo: 139 productos reales importados de la tienda Tiendanube de Yaguá (prisma/data/tiendanube.json,
+// ver scripts/tiendanube/) + los de la carpeta de fotos propia + algunos de EJEMPLO con fotos de stock
+// para deportes que la tienda todavía no tiene online (palos de hockey, tenis, golf, pesca).
+// TODO: embajadores, jugadores, sponsors, asociaciones y pedidos son de EJEMPLO.
+import { readFileSync } from 'node:fs'
 import { config } from 'dotenv'
 import bcrypt from 'bcryptjs'
 import { PrismaPg } from '@prisma/adapter-pg'
@@ -18,19 +21,19 @@ const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.
 const SPORTS = [
   {
     slug: 'running', name: 'Running', tagline: 'Cada kilómetro cuenta',
-    description: 'Remeras, shorts y musculosas livianas que respiran con vos.',
+    description: 'Remeras, tops, calzas y shorts livianos para correr y entrenar.',
     heroImage: '/sports/running.webp', cardImage: '/sports/running-2.webp',
-    categories: [['remeras', 'Remeras'], ['shorts', 'Shorts'], ['musculosas', 'Musculosas']],
+    categories: [['remeras', 'Remeras y musculosas'], ['tops', 'Tops'], ['calzas', 'Calzas'], ['shorts', 'Shorts y polleras']],
   },
   {
     slug: 'hockey', name: 'Hockey', tagline: 'Garra en la cancha',
-    description: 'Palos, pelotitas, bucales, canilleras e indumentaria para jugar en serio.',
+    description: 'Palos, bochas, bucales, canilleras y fundas para jugar en serio.',
     heroImage: '/sports/hockey.webp', cardImage: '/sports/hockey-2.webp',
-    categories: [['palos', 'Palos'], ['pelotitas', 'Pelotitas'], ['bucales', 'Bucales'], ['canilleras', 'Canilleras'], ['indumentaria', 'Indumentaria']],
+    categories: [['palos', 'Palos'], ['bochas', 'Bochas'], ['bucales', 'Bucales'], ['canilleras', 'Canilleras'], ['fundas', 'Fundas y grips']],
   },
   {
-    slug: 'padel', name: 'Pádel', tagline: 'Moda + Pádel',
-    description: 'Paletas, paleteros, pelotas e indumentaria para dominar el blindex.',
+    slug: 'padel', name: 'Pádel', tagline: 'Moda + Rendimiento',
+    description: 'Paletas Yamaha, paleteros, pelotas e indumentaria para dominar el blindex.',
     heroImage: '/sports/padel.webp', cardImage: '/sports/padel-2.webp',
     categories: [['paletas', 'Paletas'], ['paleteros', 'Paleteros'], ['pelotas', 'Pelotas'], ['indumentaria', 'Indumentaria']],
   },
@@ -41,28 +44,34 @@ const SPORTS = [
     categories: [['raquetas', 'Raquetas'], ['pelotitas', 'Pelotitas'], ['indumentaria', 'Indumentaria']],
   },
   {
-    slug: 'trekking', name: 'Trekking', tagline: 'Más allá del camino',
-    description: 'Camperas, chalecos y mochilas para la montaña y la ciudad.',
+    slug: 'trekking', name: 'Outdoor', tagline: 'Abrigo para todo terreno',
+    description: 'Camperas, buzos térmicos y pantalones para el frío, el viento y la lluvia.',
     heroImage: '/sports/trekking.webp', cardImage: '/sports/trekking-2.webp',
-    categories: [['camperas', 'Camperas'], ['chalecos', 'Chalecos'], ['mochilas', 'Mochilas']],
+    categories: [['camperas', 'Camperas y chalecos'], ['buzos', 'Buzos y térmicas'], ['pantalones', 'Pantalones'], ['mochilas', 'Mochilas'], ['accesorios', 'Gorros y cuellos']],
   },
   {
     slug: 'golf', name: 'Golf', tagline: 'Precisión y estilo',
-    description: 'Chombas, gorras, guantes y pelotas para cada hoyo.',
+    description: 'Chombas con protección UV, gorras, guantes y pelotas para cada hoyo.',
     heroImage: '/sports/golf.webp', cardImage: '/sports/golf-2.webp',
     categories: [['indumentaria', 'Indumentaria'], ['gorras', 'Gorras'], ['guantes', 'Guantes'], ['pelotas', 'Pelotas']],
   },
   {
-    slug: 'king-fishing', name: 'King Fishing', tagline: 'Pesca y náutica',
-    description: 'La línea de pesca y náutica de Yaguá: cañas, reeles, señuelos y todo para el río.',
+    slug: 'king-fishing', name: 'King Fishing', tagline: 'Pesca y aventura',
+    description: 'La línea de pesca y aventura: indumentaria técnica NeoDry con protección UV, bolsos estancos y equipos para el río.',
     heroImage: '/sports/pesca.webp', cardImage: '/sports/pesca-2.webp', isSubBrand: true,
-    categories: [['canas', 'Cañas'], ['reeles', 'Reeles'], ['senuelos', 'Señuelos'], ['nautica', 'Náutica']],
+    categories: [['indumentaria', 'Indumentaria técnica'], ['accesorios', 'Bolsos y accesorios'], ['canas', 'Cañas'], ['reeles', 'Reeles'], ['senuelos', 'Señuelos']],
+  },
+  {
+    slug: 'ninos', name: 'Niños', tagline: 'Para los que no paran',
+    description: 'Remeras con protección UV, calzas, vestidos y buzos para los más chicos.',
+    heroImage: '/campaigns/ninos.webp', cardImage: '/products/tn/remera-upf-nina-manga-larga-proteccion-uv-y-secado-rapido-llkq8-1.webp',
+    categories: [['remeras', 'Remeras'], ['calzas', 'Calzas'], ['shorts', 'Shorts'], ['vestidos', 'Vestidos'], ['buzos', 'Buzos']],
   },
   {
     slug: 'accesorios', name: 'Accesorios', tagline: 'Los detalles suman',
-    description: 'Gorros, gorras, anteojos de sol, bolsos y botellas.',
+    description: 'Gorras, medias, bolsos, todo para la playa, anteojos y botellas.',
     heroImage: '/sports/accesorios.webp', cardImage: '/sports/accesorios.webp',
-    categories: [['gorros', 'Gorros'], ['gorras', 'Gorras'], ['anteojos', 'Anteojos de sol'], ['bolsos', 'Bolsos'], ['botellas', 'Botellas']],
+    categories: [['gorras', 'Gorras'], ['medias', 'Medias'], ['bolsos', 'Bolsos'], ['playa', 'Playa y verano'], ['anteojos', 'Anteojos de sol'], ['botellas', 'Botellas']],
   },
 ] as const
 
@@ -440,17 +449,62 @@ const PRODUCTS: Seed[] = [
   },
 ]
 
+// Productos de stock que ya tienen su versión real en Tiendanube: no se cargan
+const REPLACED_BY_TIENDANUBE = new Set([
+  'short-deportivo', 'chomba-tecnica', 'campera-puffer-capucha', 'campera-puffer-liviana', 'chaleco-puffer-capucha', 'chaleco-puffer',
+  'protector-bucal', 'canilleras-hockey', 'paleta-yagua-carbon-pro', 'paleta-control', 'gorra-trucker-king', 'gorro-tejido', 'gorra-yagua',
+])
+// Categorías que cambiaron con la nueva estructura
+const RECATEGORIZE: Record<string, string> = { 'running/musculosas': 'running/remeras', 'hockey/pelotitas': 'hockey/bochas' }
+
+const OWN_PRODUCTS: Seed[] = PRODUCTS.filter((x) => !REPLACED_BY_TIENDANUBE.has(x.slug)).map((x) => {
+  const to = RECATEGORIZE[`${x.sport}/${x.category}`]
+  return to ? { ...x, sport: to.split('/')[0], category: to.split('/')[1] } : x
+})
+
+// ───────────────────────────── Catálogo real (Tiendanube)
+
+type TnProduct = {
+  slug: string; name: string; sport: string; category: string; brand: string; gender: Gender
+  price: number; salePrice: number | null; description: string; specs: { label: string; value: string }[]
+  sizeGuide: string | null
+  variants: { size: string; color: string; colorHex: string; stock: number }[]
+  images: { file: string; color: string | null }[]
+}
+const TIENDANUBE: TnProduct[] = JSON.parse(readFileSync(new URL('./data/tiendanube.json', import.meta.url), 'utf8'))
+
+const BRANDS = [
+  { slug: 'yagua', name: 'Yaguá', logo: '/brand/yagua-logo.svg' },
+  { slug: 'king-fishing', name: 'King Fishing' },
+  { slug: 'kiiing-adventure', name: 'Kiiing Adventure' },
+  { slug: 'yamaha', name: 'Yamaha' },
+  { slug: 'kilca', name: 'Kilca' },
+  { slug: 'tk', name: 'TK' },
+]
+
+// Colecciones nuevas y productos estrella (para etiquetas y "lo más vendido")
+const NEW_RE = /luxe|spirit|street|trend|nature|aurora|kairo|puffer tech|neodry|kiiing|upf|softshell - dama|overpant/i
+const FEATURED_RE = /chomba deportiva|puffer|short microfibra|crop top deportivo (negro|luxe)|paleta padel yamaha carbono|anorak|buzo canguro explorer|calza larga/i
+
+/** Número estable a partir de un texto (así la demo queda igual en cada seed) */
+function hash(t: string) {
+  let h = 2166136261
+  for (const ch of t) h = Math.imul(h ^ ch.charCodeAt(0), 16777619)
+  return Math.abs(h)
+}
+
 // ───────────────────────────── Comunidad (TODO: datos de ejemplo)
+
 
 const AMBASSADORS = [
   { slug: 'sofia-benitez', name: 'Sofía Benítez', sport: 'Pádel', photo: '/community/embajadora-1.webp', instagram: 'https://instagram.com/',
-    bio: 'Jugadora de primera categoría del circuito entrerriano. Entrena todos los días con Yaguá.', favorites: ['pollera-padel', 'remera-cuello-v-mujer', 'paleta-yagua-carbon-pro'] },
+    bio: 'Jugadora de primera categoría del circuito entrerriano. Entrena todos los días con Yaguá.', favorites: ['pollera-padel', 'remera-cuello-v-mujer', 'paleta-padel-yamaha-carbono-fibra-vidrio-ray-zr-profesional'] },
   { slug: 'lucia-ferreyra', name: 'Lucía Ferreyra', sport: 'Running', photo: '/community/embajadora-2.webp', instagram: 'https://instagram.com/',
-    bio: 'Maratonista y entrenadora de grupos de running en la costanera.', favorites: ['musculosa-dry-mujer', 'botella-termica', 'anteojos-deportivos'] },
+    bio: 'Maratonista y entrenadora de grupos de running en la costanera.', favorites: ['crop-top-deportivo-luxe', 'calza-larga-deportiva-tiro-alto-luxe', 'botella-termica'] },
   { slug: 'tomas-acosta', name: 'Tomás Acosta', sport: 'Trail y trekking', photo: '/community/embajador-1.webp', instagram: 'https://instagram.com/',
-    bio: 'Corredor de trail y guía de montaña. Probó cada campera en la cordillera.', favorites: ['campera-puffer-capucha', 'mochila-trekking-30', 'camiseta-dry-fit'] },
+    bio: 'Corredor de trail y guía de montaña. Probó cada campera en la cordillera.', favorites: ['campera-puffer-tech-1a0om', 'mochila-trekking-30', 'buzo-canguro-explorer-tricapa'] },
   { slug: 'martin-rios', name: 'Martín Ríos', sport: 'Golf', photo: '/community/embajador-2.webp', instagram: 'https://instagram.com/',
-    bio: 'Handicap 4 y profe de golf. Elegancia y técnica dentro y fuera del green.', favorites: ['chomba-tecnica', 'guante-golf-cabretta', 'gorra-golf'] },
+    bio: 'Handicap 4 y profe de golf. Elegancia y técnica dentro y fuera del green.', favorites: ['chomba-deportiva-hombre-uv-secado-rapido-130g3', 'guante-golf-cabretta', 'gorra-golf'] },
 ]
 
 const PLAYERS = [
@@ -484,6 +538,115 @@ const COLOR_CODE = (c: string) =>
   c.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z]/g, '').slice(0, 3).toUpperCase()
 const SIZE_CODE = (s: string) => s.replace(/[^a-zA-Z0-9]/g, '').toUpperCase() || 'U'
 
+// ───────────────────────────── Actividad de ejemplo para el panel (TODO: se borra al salir a producción)
+
+const FIRST = ['Lucía', 'Martina', 'Sofía', 'Valentina', 'Camila', 'Julieta', 'Agustina', 'Florencia', 'Micaela', 'Carolina', 'Romina', 'Paula',
+  'Juan', 'Mateo', 'Santiago', 'Facundo', 'Joaquín', 'Lautaro', 'Nicolás', 'Matías', 'Federico', 'Ignacio', 'Tomás', 'Gonzalo']
+const LAST = ['González', 'Rodríguez', 'Fernández', 'López', 'Martínez', 'Pereyra', 'Romero', 'Sosa', 'Benítez', 'Acosta', 'Medina', 'Herrera',
+  'Aguirre', 'Giménez', 'Ruiz Díaz', 'Ledesma', 'Cabrera', 'Ríos', 'Godoy', 'Ojeda']
+const PLACES = [
+  { city: 'Concepción del Uruguay', province: 'Entre Ríos', postalCode: '3260', shipping: 0 },
+  { city: 'Concepción del Uruguay', province: 'Entre Ríos', postalCode: '3260', shipping: 0 },
+  { city: 'Gualeguaychú', province: 'Entre Ríos', postalCode: '2820', shipping: 7990 },
+  { city: 'Colón', province: 'Entre Ríos', postalCode: '3280', shipping: 7990 },
+  { city: 'Paraná', province: 'Entre Ríos', postalCode: '3100', shipping: 7990 },
+  { city: 'Rosario', province: 'Santa Fe', postalCode: '2000', shipping: 11990 },
+  { city: 'Ciudad de Buenos Aires', province: 'CABA', postalCode: '1414', shipping: 11990 },
+]
+const STREETS = ['Rocamora', 'Moreno', 'Galarza', 'Alberdi', 'Urquiza', 'Leguizamón', '8 de Junio', 'San Martín', 'Mitre', 'Belgrano']
+
+/** Generador pseudoaleatorio con semilla: la demo sale igual en cada seed */
+function rng(seed: number) {
+  let a = seed
+  return () => {
+    a |= 0
+    a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+async function seedDemoActivity() {
+  const rand = rng(2026)
+  const pick = <T,>(xs: readonly T[]) => xs[Math.floor(rand() * xs.length)]
+  const variants = await db.productVariant.findMany({
+    where: { stock: { gt: 0 }, product: { slug: { in: TIENDANUBE.map((t) => t.slug) } } },
+    select: { id: true, size: true, color: true, productId: true, product: { select: { name: true, price: true, salePrice: true, images: { take: 1, orderBy: { sortOrder: 'asc' }, select: { url: true } } } } },
+  })
+  const now = Date.now()
+  const ORDERS = 46
+  for (let n = 0; n < ORDERS; n++) {
+    // más pedidos en los últimos días
+    const daysAgo = Math.floor(Math.pow(rand(), 1.6) * 28)
+    const createdAt = new Date(now - daysAgo * 864e5 - Math.floor(rand() * 10) * 36e5)
+    const first = pick(FIRST)
+    const last = pick(LAST)
+    const pickup = rand() < 0.35
+    const place = pick(PLACES)
+    const payment = pickup && rand() < 0.3 ? 'CASH' : rand() < 0.55 ? 'BANK_TRANSFER' : 'MERCADOPAGO'
+    const lines = Array.from({ length: 1 + Math.floor(rand() * 2.4) }, () => pick(variants))
+    const items = [...new Map(lines.map((v) => [v.id, v])).values()].map((v) => ({
+      productId: v.productId, variantId: v.id, productName: v.product.name, size: v.size, color: v.color,
+      image: v.product.images[0]?.url ?? null, unitPrice: v.product.salePrice ?? v.product.price, quantity: rand() < 0.15 ? 2 : 1,
+    }))
+    const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
+    const coupon = rand() < 0.12 && subtotal >= 30000 ? 'BIENVENIDA10' : null
+    let discount = coupon ? Math.round(subtotal * 0.1) : 0
+    if (payment === 'BANK_TRANSFER') discount += Math.round((subtotal - discount) * 0.1)
+    const shippingCost = pickup || subtotal >= 150000 ? 0 : place.shipping
+    const r = rand()
+    const status =
+      daysAgo <= 1 ? (payment === 'MERCADOPAGO' ? (r < 0.5 ? 'PAID' : 'PREPARING') : r < 0.6 ? 'PENDING' : 'PAID')
+      : daysAgo <= 4 ? (r < 0.4 ? 'PREPARING' : pickup ? 'READY_FOR_PICKUP' : 'SHIPPED')
+      : r < 0.08 ? 'CANCELLED' : 'DELIVERED'
+    const paymentStatus = status === 'PENDING' ? 'PENDING' : status === 'CANCELLED' ? 'CANCELLED' : 'APPROVED'
+    const total = subtotal - discount + shippingCost
+    await db.order.create({
+      data: {
+        email: `${first}.${last}`.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s/g, '').toLowerCase() + '@ejemplo.com',
+        customerName: `${first} ${last}`,
+        phone: `3442${String(400000 + Math.floor(rand() * 99999))}`,
+        dni: String(25_000_000 + Math.floor(rand() * 20_000_000)),
+        status, shippingMethod: pickup ? 'STORE_PICKUP' : 'HOME_DELIVERY', paymentMethod: payment,
+        shippingAddress: pickup ? undefined : { street: pick(STREETS), number: String(100 + Math.floor(rand() * 1800)), city: place.city, province: place.province, postalCode: place.postalCode },
+        subtotal, discount, shippingCost, total, couponCode: coupon, createdAt, updatedAt: createdAt,
+        items: { create: items },
+        payments: { create: { method: payment, amount: total, status: paymentStatus, createdAt } },
+      },
+    })
+  }
+  console.log(`${ORDERS} pedidos de ejemplo cargados`)
+
+  await db.customOrder.deleteMany()
+  await db.customOrder.createMany({
+    data: [
+      {
+        teamName: 'Club Atlético Ribera', contactName: 'Carolina Medina', email: 'hockey@ribera.ejemplo.com', phone: '3442556677',
+        garment: 'camiseta de hockey', colors: { primary: '#1d2b4f', secondary: '#bcd637' }, quantity: 18,
+        players: Array.from({ length: 18 }, (_, i) => ({ name: `${pick(FIRST)} ${pick(LAST)}`, number: String(i + 1), size: pick(['S', 'M', 'L']) })),
+        notes: 'Para el torneo regional de marzo. Necesitamos también 2 de arquera.', createdAt: new Date(now - 2 * 36e5),
+      },
+      {
+        teamName: 'Pádel Club del Litoral', contactName: 'Matías Ojeda', email: 'info@padellitoral.ejemplo.com', phone: '3442611223',
+        garment: 'remera dry fit', colors: { primary: '#ee3164', secondary: '#1b181c' }, quantity: 30,
+        players: [], notes: 'Remeras para el torneo de verano, con logo adelante y sponsors en la espalda.', status: 'QUOTED', estimate: 690000,
+        createdAt: new Date(now - 3 * 864e5),
+      },
+      {
+        teamName: 'Running Team Concepción', contactName: 'Lucía Ferreyra', email: 'runningteam@ejemplo.com', phone: '3442677889',
+        garment: 'musculosa', colors: { primary: '#bcd637', secondary: '#1b181c' }, quantity: 45,
+        players: [], notes: 'Para la Maratón Ciudad del Río.', status: 'IN_PRODUCTION', estimate: 855000, createdAt: new Date(now - 9 * 864e5),
+      },
+    ],
+  })
+
+  await db.newsletterSubscriber.createMany({
+    data: Array.from({ length: 38 }, (_, i) => ({ email: `suscriptor${i + 1}@ejemplo.com` })),
+    skipDuplicates: true,
+  })
+}
+
 async function main() {
   console.log('Borrando datos de catálogo, comunidad y campañas…')
   await db.$transaction([
@@ -505,10 +668,8 @@ async function main() {
     db.coupon.deleteMany(),
   ])
 
-  const brands = {
-    yagua: await db.brand.create({ data: { slug: 'yagua', name: 'Yaguá', logo: '/brand/yagua-logo.svg' } }),
-    'king-fishing': await db.brand.create({ data: { slug: 'king-fishing', name: 'King Fishing' } }),
-  }
+  const brands: Record<string, { id: string }> = {}
+  for (const b of BRANDS) brands[b.slug] = await db.brand.create({ data: b })
 
   const sportIds: Record<string, string> = {}
   const categoryIds: Record<string, string> = {}
@@ -527,7 +688,7 @@ async function main() {
 
   let skuSeq = 100
   const now = Date.now()
-  for (const [i, item] of PRODUCTS.entries()) {
+  for (const [i, item] of OWN_PRODUCTS.entries()) {
     const code = `YG${skuSeq++}`
     const categoryId = categoryIds[`${item.sport}/${item.category}`]
     if (!categoryId) throw new Error(`Categoría inexistente: ${item.sport}/${item.category}`)
@@ -544,8 +705,7 @@ async function main() {
         tags: item.tags ?? [],
         sizeGuide: item.sizeGuide ?? null,
         soldCount: item.soldCount ?? 0,
-        // los primeros de la lista aparecen como más nuevos
-        createdAt: new Date(now - i * 36e5 * 7),
+        createdAt: new Date(now - (30 + i) * 36e5 * 9),
         sportId: sportIds[item.sport],
         categoryId,
         brandId: brands[item.brand ?? 'yagua'].id,
@@ -569,7 +729,47 @@ async function main() {
       },
     })
   }
-  console.log(`${PRODUCTS.length} productos cargados`)
+  console.log(`${OWN_PRODUCTS.length} productos propios/de ejemplo cargados`)
+
+  for (const [i, item] of TIENDANUBE.entries()) {
+    const categoryId = categoryIds[`${item.sport}/${item.category}`]
+    if (!categoryId) throw new Error(`Categoría inexistente: ${item.sport}/${item.category} (${item.slug})`)
+    const h = hash(item.slug)
+    const isNew = NEW_RE.test(item.name)
+    const featured = FEATURED_RE.test(item.name)
+    const tags: ProductTag[] = []
+    if (isNew) tags.push('NUEVO')
+    if (item.salePrice) tags.push('OFERTA')
+    if (featured) tags.push('DESTACADO')
+    const code = `TN${String(i + 1).padStart(3, '0')}`
+    await db.product.create({
+      data: {
+        slug: item.slug,
+        name: item.name,
+        description: item.description,
+        specs: item.specs,
+        price: item.price,
+        salePrice: item.salePrice,
+        gender: item.gender,
+        tags,
+        sizeGuide: item.sizeGuide,
+        soldCount: (featured ? 80 : 5) + (h % 70),
+        createdAt: new Date(now - (isNew ? h % 20 : 25 + (h % 200)) * 864e5),
+        sportId: sportIds[item.sport],
+        categoryId,
+        brandId: brands[item.brand].id,
+        images: { create: item.images.map((img, j) => ({ url: img.file, alt: img.color ? `${item.name} ${img.color}` : item.name, color: img.color, sortOrder: j })) },
+        variants: {
+          create: item.variants.map((v, j) => ({
+            sku: `${code}-${COLOR_CODE(v.color)}${j}-${SIZE_CODE(v.size)}`,
+            size: v.size, color: v.color, colorHex: v.colorHex, stock: Math.min(v.stock, 40),
+          })),
+        },
+      },
+    })
+  }
+  console.log(`${TIENDANUBE.length} productos de Tiendanube cargados`)
+
 
   for (const [i, a] of AMBASSADORS.entries()) {
     await db.ambassador.create({
@@ -587,18 +787,28 @@ async function main() {
   await db.campaign.createMany({
     data: [
       {
-        slug: 'moda-padel', title: 'Moda + Pádel', subtitle: 'Tu próximo outfit deportivo favorito te espera acá.',
-        ctaLabel: 'Ver colección pádel', ctaHref: '/padel', image: '/campaigns/moda-padel.webp',
-        startsAt: new Date(now - day), endsAt: new Date(now + 60 * day),
+        slug: 'cyber-monday', title: 'Cyber Monday', subtitle: 'Las mejores ofertas y promociones, hasta el lunes 16 de noviembre.',
+        ctaLabel: 'Ver ofertas', ctaHref: '/ofertas', image: '/campaigns/cyber-monday.webp',
+        startsAt: new Date('2026-11-01T00:00:00-03:00'), endsAt: new Date('2026-11-16T23:59:59-03:00'),
       },
       {
-        slug: 'black-friday', title: 'Black Friday', subtitle: 'Hasta 30% OFF en toda la tienda.',
-        ctaLabel: 'Ver ofertas', ctaHref: '/ofertas', image: '/sports/running-2.webp',
-        discountType: 'PERCENT', discountValue: 30,
-        startsAt: new Date('2026-11-27T00:00:00-03:00'), endsAt: new Date('2026-11-30T23:59:59-03:00'),
+        slug: 'summer-sale', title: 'Summer Sale', subtitle: 'Hasta 30% OFF + 3 y 6 cuotas sin interés.',
+        ctaLabel: 'Ver colección de verano', ctaHref: '/running', image: '/campaigns/summer-sale.webp',
+        startsAt: new Date('2026-11-17T00:00:00-03:00'), endsAt: new Date('2027-02-28T23:59:59-03:00'),
+      },
+      {
+        slug: 'moda-rendimiento', title: 'Moda + Rendimiento', subtitle: 'Tu próximo outfit deportivo favorito te espera acá.',
+        ctaLabel: 'Ver colección pádel', ctaHref: '/padel', image: '/campaigns/moda-rendimiento.webp',
+        startsAt: new Date('2026-09-01T00:00:00-03:00'), endsAt: new Date('2026-10-31T23:59:59-03:00'),
+      },
+      {
+        slug: 'camperas-pufftech', title: 'Camperas PuffTech', subtitle: 'Temporada otoño-invierno. Talles S a 3XL.',
+        ctaLabel: 'Ver camperas', ctaHref: '/trekking/camperas', image: '/campaigns/pufftech.webp', active: false,
+        startsAt: new Date('2027-04-01T00:00:00-03:00'), endsAt: new Date('2027-06-30T23:59:59-03:00'),
       },
     ],
   })
+  await seedDemoActivity()
   await db.coupon.create({ data: { code: 'BIENVENIDA10', type: 'PERCENT', value: 10, minPurchase: 30000 } })
 
   const email = process.env.SEED_ADMIN_EMAIL

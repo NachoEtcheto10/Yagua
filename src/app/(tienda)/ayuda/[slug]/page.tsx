@@ -10,7 +10,7 @@ const PAGES: Record<string, { title: string; body: string[] }> = {
     body: [
       `Enviamos a todo el país. Las compras desde $${COMMERCE.freeShippingFrom.toLocaleString('es-AR')} tienen envío gratis.`,
       'En Concepción del Uruguay entregamos en el día. En el resto de Entre Ríos, de 2 a 4 días hábiles; en el resto del país, de 4 a 7.',
-      `También podés retirar sin cargo en nuestro local (${SITE.address}). Te avisamos cuando el pedido esté listo.`,
+      `También podés retirar sin cargo en nuestro local (${SITE.address}, ${SITE.city}). Te avisamos cuando el pedido esté listo.`,
     ],
   },
   cambios: {

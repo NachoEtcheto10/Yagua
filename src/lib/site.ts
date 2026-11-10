@@ -1,5 +1,5 @@
 // Datos de la tienda y reglas comerciales. Un solo lugar para cambiarlos.
-// TODO: confirmar con el cliente dirección, teléfono, redes, CUIT y montos.
+// TODO: confirmar con el cliente e-mail, Facebook, razón social, CUIT y montos de envío.
 
 // En Vercel, si no se define NEXT_PUBLIC_SITE_URL, se usa el dominio de producción del proyecto
 const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null
@@ -12,13 +12,14 @@ export const SITE = {
   url: process.env.NEXT_PUBLIC_SITE_URL || vercelUrl || 'http://localhost:3000',
   description:
     'Indumentaria y equipamiento deportivo de Concepción del Uruguay: running, hockey, pádel, tenis, trekking, golf y King Fishing.',
-  city: 'Concepción del Uruguay, Entre Ríos',
-  address: 'TODO: dirección del local', // TODO
-  mapsQuery: 'Concepción del Uruguay, Entre Ríos',
-  hours: 'Lunes a viernes 9 a 13 y 17 a 21 · Sábados 9 a 13', // TODO
-  whatsapp: '5493442000000', // TODO: número real
+  city: 'Concepción del Uruguay (3260), Entre Ríos',
+  address: '9 de Julio 865',
+  mapsQuery: '9 de Julio 865, Concepción del Uruguay, Entre Ríos',
+  hours: 'Lunes a viernes de 8 a 20 · Sábados de 8 a 13',
+  whatsapp: '5493442488220',
+  whatsappDisplay: '+54 9 3442 48-8220',
   email: 'hola@yagua.com.ar', // TODO
-  instagram: 'https://instagram.com/', // TODO
+  instagram: 'https://www.instagram.com/yagua_sport/',
   facebook: 'https://facebook.com/', // TODO
   legalName: 'TODO: razón social', // TODO
   cuit: 'TODO', // TODO

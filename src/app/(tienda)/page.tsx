@@ -22,7 +22,7 @@ export default async function HomePage() {
     getActiveCampaign(),
     getCommunity(),
   ])
-  const mainSports = sports.filter((s) => !s.isSubBrand && s.slug !== 'accesorios')
+  const mainSports = sports.filter((s) => !s.isSubBrand) // 8 tarjetas: grilla de 4×2 completa
 
   return (
     <>
@@ -34,14 +34,17 @@ export default async function HomePage() {
         <Container>
           <SectionTitle>Elegí tu deporte</SectionTitle>
           <div className="mt-8 grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
-            {mainSports.map((s, i) => (
-              <Reveal key={s.slug} delay={(i % 4) * 0.06} className={i < 2 ? 'lg:col-span-2' : ''}>
-                <Link href={`/${s.slug}`} className={`group relative block overflow-hidden bg-brand-mist ${i < 2 ? 'aspect-[4/5] lg:aspect-[16/10]' : 'aspect-[4/5]'}`}>
+            {mainSports.map((s, i) => {
+              // Las 2 primeras van grandes; si sobran 2 al final, también, para que la grilla cierre sin huecos
+              const big = i < 2 || ((mainSports.length - 2) % 4 === 2 && i >= mainSports.length - 2)
+              return (
+              <Reveal key={s.slug} delay={(i % 4) * 0.06} className={big ? 'lg:col-span-2' : ''}>
+                <Link href={`/${s.slug}`} className={`group relative block overflow-hidden bg-brand-mist ${big ? 'aspect-[4/5] lg:aspect-[16/10]' : 'aspect-[4/5]'}`}>
                   <Image
                     src={s.cardImage}
                     alt={s.name}
                     fill
-                    sizes={i < 2 ? '(min-width: 1024px) 50vw, 50vw' : '(min-width: 1024px) 25vw, 50vw'}
+                    sizes={big ? '(min-width: 1024px) 50vw, 50vw' : '(min-width: 1024px) 25vw, 50vw'}
                     className="object-cover transition duration-700 ease-out group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
@@ -56,7 +59,8 @@ export default async function HomePage() {
                   </div>
                 </Link>
               </Reveal>
-            ))}
+              )
+            })}
           </div>
         </Container>
       </section>
@@ -89,24 +93,26 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* 4. Campaña de temporada (editable desde el admin) */}
+      {/* 4. Campaña de temporada (editable desde el admin). Los banners traen el texto en la imagen. */}
       {campaign && (
-        <section className="bg-brand-accent">
-          <div className="mx-auto grid max-w-[1440px] items-stretch md:grid-cols-2">
-            <Reveal className="flex flex-col justify-center px-4 py-14 sm:px-6 lg:px-16 lg:py-24">
-              <p className="font-display text-sm font-bold uppercase tracking-[0.3em] text-white/80">Campaña</p>
-              <h2 className="mt-3 font-display text-6xl font-black uppercase italic leading-[0.85] text-white lg:text-8xl">{campaign.title}</h2>
-              {campaign.subtitle && <p className="mt-5 max-w-md text-lg text-white/90">{campaign.subtitle}</p>}
-              {campaign.ctaHref && (
-                <Link href={campaign.ctaHref} className={`${buttonClass.light} mt-8 self-start`}>
+        <section className="py-10 lg:py-14">
+          <Container>
+            <Reveal>
+              <Link href={campaign.ctaHref ?? '/ofertas'} className="group relative block overflow-hidden bg-brand-mist">
+                <Image
+                  src={campaign.image}
+                  alt={`${campaign.title}${campaign.subtitle ? `. ${campaign.subtitle}` : ''}`}
+                  width={1580}
+                  height={600}
+                  sizes="(min-width: 1440px) 1360px, 100vw"
+                  className="h-auto w-full transition duration-700 group-hover:scale-[1.02]"
+                />
+                <span className={`${buttonClass.primary} absolute bottom-4 right-4 hidden sm:inline-flex`}>
                   {campaign.ctaLabel ?? 'Ver más'} <ArrowRight size={20} className="transition group-hover:translate-x-1" />
-                </Link>
-              )}
+                </span>
+              </Link>
             </Reveal>
-            <div className="relative min-h-[460px] bg-brand-primary">
-              <Image src={campaign.image} alt={campaign.title} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-contain" />
-            </div>
-          </div>
+          </Container>
         </section>
       )}
 
