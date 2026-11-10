@@ -210,7 +210,7 @@ export function ProductForm({ initial, options, storageReady }: { initial: Produ
                 </li>
               </ul>
               <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={(e) => onFiles(e.target.files)} />
-              {!storageReady && <p className="mt-3 text-xs text-amber-700">Para subir fotos falta configurar el almacenamiento (variables AWS_* de Neon).</p>}
+              {!storageReady && <p className="mt-3 text-xs text-amber-700">Para subir fotos falta configurar el almacenamiento (variables STORAGE_* de Neon).</p>}
             </div>
           </Card>
 

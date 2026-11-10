@@ -23,8 +23,10 @@ se regeneran con `npm run images`.
 1. Importar el repo en Vercel (framework: Next.js, sin cambios en build).
 2. Variables de entorno (Settings → Environment Variables), copiadas de `.env.local`:
    `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `AUTH_SECRET`.
-   Para subir fotos desde el panel, además: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ENDPOINT_URL_S3`, `AWS_REGION`
-   (almacenamiento de Neon, bucket `assets`).
+   Para subir fotos desde el panel (almacenamiento de Neon, bucket `assets`), con los valores de las AWS_* de `.env.local`
+   pero con estos nombres, porque Vercel reserva los AWS_*:
+   `STORAGE_ACCESS_KEY_ID` (= AWS_ACCESS_KEY_ID), `STORAGE_SECRET_ACCESS_KEY` (= AWS_SECRET_ACCESS_KEY),
+   `STORAGE_ENDPOINT_URL` (= AWS_ENDPOINT_URL_S3). La región queda fija en `us-east-1` (se cambia con `STORAGE_REGION`).
 3. La región de las funciones queda en `iad1` (Washington) por `vercel.json`, al lado de la base de Neon (us-east-1).
 4. Mientras sea demo no se indexa en Google. Para lanzarla: `SITE_INDEXABLE=true` y `NEXT_PUBLIC_SITE_URL` con el dominio real.
 

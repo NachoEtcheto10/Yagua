@@ -3,7 +3,8 @@ import type { NextConfig } from 'next'
 // Fotos subidas desde el admin (Neon Object Storage)
 const storageHost = (() => {
   try {
-    return process.env.AWS_ENDPOINT_URL_S3 ? new URL(process.env.AWS_ENDPOINT_URL_S3).hostname : null
+    const url = process.env.STORAGE_ENDPOINT_URL || process.env.AWS_ENDPOINT_URL_S3
+    return url ? new URL(url).hostname : null
   } catch {
     return null
   }
