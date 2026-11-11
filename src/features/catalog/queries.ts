@@ -11,8 +11,11 @@ import { sortSizes } from '@/lib/sizes'
 // El precio y el stock se vuelven a validar contra la base en el checkout.
 export const CATALOG_TAG = 'catalog'
 
+// En desarrollo (npm run dev) no se cachea: así siempre se ve lo que hay en la base (por ejemplo, después de un seed).
+const DEV = process.env.NODE_ENV === 'development'
+
 function cached<A extends unknown[], R>(name: string, fn: (...args: A) => Promise<R>) {
-  return cache(unstable_cache(fn, ['catalog', name], { revalidate: 120, tags: [CATALOG_TAG] }))
+  return cache(DEV ? fn : unstable_cache(fn, ['catalog', name], { revalidate: 120, tags: [CATALOG_TAG] }))
 }
 
 // ───────────────────────────── Tipos para la UI

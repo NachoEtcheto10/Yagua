@@ -3,9 +3,11 @@ import { unstable_cache } from 'next/cache'
 import { db } from '@/lib/db'
 
 const opts = { revalidate: 120, tags: ['catalog'] }
+// En desarrollo no se cachea (siempre muestra lo que hay en la base)
+const homeCache: typeof unstable_cache = process.env.NODE_ENV === 'development' ? ((fn) => fn) : unstable_cache
 
 /** Campaña vigente para mostrar en la home (la que empezó más recientemente) */
-export const getActiveCampaign = unstable_cache(
+export const getActiveCampaign = homeCache(
   async () => {
     const now = new Date()
     return db.campaign.findFirst({
@@ -17,7 +19,7 @@ export const getActiveCampaign = unstable_cache(
   opts,
 )
 
-export const getCommunity = unstable_cache(async () => {
+export const getCommunity = homeCache(async () => {
   const [ambassadors, players, sponsors, associations] = await Promise.all([
     db.ambassador.findMany({
       orderBy: { sortOrder: 'asc' },
