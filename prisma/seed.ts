@@ -70,7 +70,7 @@ const SPORTS = [
   {
     slug: 'accesorios', name: 'Accesorios', tagline: 'Los detalles suman',
     description: 'Gorras, medias, bolsos, todo para la playa, anteojos y botellas.',
-    heroImage: '/sports/accesorios.webp', cardImage: '/sports/accesorios.webp',
+    heroImage: '/products/tn/medias-largas-blancas-yagua-1.webp', cardImage: '/products/tn/medias-largas-blancas-yagua-1.webp',
     categories: [['gorras', 'Gorras'], ['medias', 'Medias'], ['bolsos', 'Bolsos'], ['playa', 'Playa y verano'], ['anteojos', 'Anteojos de sol'], ['botellas', 'Botellas']],
   },
 ] as const

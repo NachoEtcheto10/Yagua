@@ -1,4 +1,5 @@
 import { Clock, MapPin, MessageCircle } from 'lucide-react'
+import { Rosettes } from '@/components/ui/Container'
 import { FacebookIcon, InstagramIcon } from '@/components/ui/SocialIcons'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -21,8 +22,9 @@ export function Footer({ sports }: { sports: NavSport[] }) {
   return (
     <footer>
       <Newsletter />
-      <div className="bg-brand-primary text-white">
-        <div className="mx-auto grid max-w-[1440px] gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1.4fr] lg:px-10">
+      <div className="relative bg-brand-primary text-white">
+        <Rosettes className="opacity-[0.04]" />
+        <div className="relative mx-auto grid max-w-[1440px] gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1.4fr] lg:px-10">
           <div>
             <Image src="/brand/yagua-logo-white.svg" alt="Yaguá" width={140} height={60} className="h-14 w-auto" />
             <p className="mt-5 max-w-xs text-sm text-white/70">{SITE.description}</p>
@@ -72,7 +74,7 @@ export function Footer({ sports }: { sports: NavSport[] }) {
           </div>
         </div>
 
-        <div className="border-t border-white/15">
+        <div className="relative border-t border-white/15">
           <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-10">
             <p className="text-xs font-semibold uppercase tracking-wider text-white/50">Medios de pago</p>
             <ul className="mt-2 flex flex-wrap gap-2">
@@ -83,7 +85,7 @@ export function Footer({ sports }: { sports: NavSport[] }) {
           </div>
         </div>
 
-        <div className="border-t border-white/15">
+        <div className="relative border-t border-white/15">
           <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-6 text-xs text-white/60 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-10">
             <p>
               © {new Date().getFullYear()} {SITE.legalName}{SITE.cuit && ` · CUIT ${SITE.cuit}`} · Todos los precios incluyen IVA.

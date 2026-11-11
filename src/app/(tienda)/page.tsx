@@ -8,6 +8,7 @@ import { ProductCard } from '@/features/catalog/components/ProductCard'
 import { getBestSellers, getBySport, getNewArrivals, getSports } from '@/features/catalog/queries'
 import { Ambassadors, Players, SponsorsAndAssociations } from '@/features/home/CommunityBlocks'
 import { Hero } from '@/features/home/Hero'
+import { Litoral } from '@/features/home/Litoral'
 import { ProductTabs } from '@/features/home/ProductTabs'
 import { getActiveCampaign, getCommunity } from '@/features/home/queries'
 
@@ -124,12 +125,12 @@ export default async function HomePage() {
           <div className="grid gap-10 lg:grid-cols-[0.9fr_1.6fr] lg:items-end">
             <Reveal>
               <p className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-[0.3em] text-kf-gold">
-                <Fish size={18} /> Pesca y náutica
+                <Fish size={18} /> Pesca y aventura
               </p>
               <h2 className="mt-3 font-display text-6xl font-black uppercase italic leading-[0.85] lg:text-8xl">
                 King<br />Fishing
               </h2>
-              <p className="mt-5 max-w-sm text-white/80">Cañas, reeles y señuelos probados en el río Uruguay. La línea de pesca de Yaguá.</p>
+              <p className="mt-5 max-w-sm text-white/80">Ropa técnica NeoDry con protección UV, bolsos estancos y equipos para pasar el día en el río Uruguay.</p>
               <Link href="/king-fishing" className="mt-8 inline-flex items-center gap-3 bg-kf-gold px-6 py-3.5 font-display text-lg font-bold uppercase tracking-wide text-kf-deep transition hover:bg-white">
                 Entrar a King Fishing <ArrowRight size={20} />
               </Link>
@@ -175,16 +176,19 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* 7. Embajadores */}
+      {/* 7. Identidad local: somos de Concepción del Uruguay */}
+      <Litoral />
+
+      {/* 8. Embajadores */}
       <Ambassadors ambassadors={community.ambassadors} />
 
-      {/* 8. Jugadores que vistieron la marca */}
+      {/* 9. Jugadores que vistieron la marca */}
       <Players players={community.players} />
 
-      {/* 9. Sponsors y asociaciones */}
+      {/* 10. Sponsors y asociaciones */}
       <SponsorsAndAssociations sponsors={community.sponsors} associations={community.associations} />
 
-      {/* 10. Newsletter + footer: en el layout */}
+      {/* 11. Newsletter + footer: en el layout */}
     </>
   )
 }
