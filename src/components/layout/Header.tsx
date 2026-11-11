@@ -26,7 +26,7 @@ function CartButton() {
     <button
       type="button"
       onClick={() => setOpen(true)}
-      aria-label={`Abrir carrito (${count} productos)`}
+      aria-label={`Abrir carrito (${count} ${count === 1 ? "producto" : "productos"})`}
       className="relative grid h-10 w-10 place-items-center"
     >
       {/* key={bump}: reinicia la animación de rebote cada vez que se agrega algo */}

@@ -1,4 +1,5 @@
 'use server'
+import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 import { z } from 'zod'
 import { auth } from '@/lib/auth'
@@ -8,6 +9,13 @@ import { createPreference, mercadoPagoEnabled } from '@/features/payments/mercad
 import { evaluateCoupon } from './coupon'
 import { effectivePrice, shippingCost, transferDiscount, zoneForPostalCode } from './pricing'
 import { checkoutSchema, type CheckoutInput } from './schema'
+import { friendlyError } from '@/lib/errors'
+
+/** "Negro, talle M" (omite lo que es "Único") */
+function variantLabel(v: { color: string; size: string }) {
+  return [v.color !== 'Único' && v.color, v.size !== 'Único' && `talle ${v.size}`].filter(Boolean).join(', ')
+}
+const withVariant = (name: string, v: { color: string; size: string }) => (variantLabel(v) ? `${name} (${variantLabel(v)})` : name)
 
 const lineSchema = z.array(z.object({ variantId: z.string().min(1), quantity: z.number().int().min(1).max(20) })).min(1).max(50)
 
@@ -20,7 +28,9 @@ async function priceLines(lines: z.infer<typeof lineSchema>) {
   const priced = lines.map((l) => {
     const v = variants.find((x) => x.id === l.variantId)
     if (!v || !v.product.active) throw new Error('Uno de los productos ya no está disponible. Revisá tu carrito.')
-    if (v.stock < l.quantity) throw new Error(`No hay stock suficiente de ${v.product.name} (${v.color}, ${v.size}). Quedan ${v.stock}.`)
+    if (v.stock < l.quantity) {
+      throw new Error(v.stock === 0 ? `Se agotó ${withVariant(v.product.name, v)}. Sacalo del carrito para seguir.` : `Solo quedan ${v.stock} de ${withVariant(v.product.name, v)}. Ajustá la cantidad en el carrito.`)
+    }
     const image = v.product.images.find((i) => i.color === v.color) ?? v.product.images[0]
     return {
       variant: v,
@@ -39,7 +49,7 @@ export async function checkCoupon(code: string, lines: { variantId: string; quan
     const { subtotal } = await priceLines(lineSchema.parse(lines))
     return await evaluateCoupon(code, subtotal)
   } catch (e) {
-    return { ok: false as const, error: e instanceof Error ? e.message : 'No se pudo validar el cupón' }
+    return { ok: false as const, error: friendlyError(e, 'No se pudo validar el cupón') }
   }
 }
 
@@ -95,7 +105,7 @@ export async function placeOrder(input: CheckoutInput, lines: { variantId: strin
           where: { id: l.variant.id, stock: { gte: l.quantity } },
           data: { stock: { decrement: l.quantity } },
         })
-        if (updated.count === 0) throw new Error(`Se agotó ${l.variant.product.name} (${l.variant.color}, ${l.variant.size}).`)
+        if (updated.count === 0) throw new Error(`Se agotó ${withVariant(l.variant.product.name, l.variant)}. Sacalo del carrito para seguir.`)
       }
       if (couponCode) await tx.coupon.update({ where: { code: couponCode }, data: { usedCount: { increment: 1 } } })
       return tx.order.create({
@@ -132,6 +142,9 @@ export async function placeOrder(input: CheckoutInput, lines: { variantId: strin
       })
     })
 
+    // El stock cambió: que las fichas y listados lo muestren al instante
+    revalidateTag('catalog')
+
     if (data.paymentMethod === 'MERCADOPAGO') {
       const h = await headers()
       const origin = h.get('origin') ?? SITE.url
@@ -142,6 +155,6 @@ export async function placeOrder(input: CheckoutInput, lines: { variantId: strin
     return { ok: true, orderId: order.id, redirectUrl: `/checkout/resultado?pedido=${order.id}` }
   } catch (e) {
     console.error('placeOrder', e)
-    return { ok: false, error: e instanceof Error ? e.message : 'No pudimos crear el pedido' }
+    return { ok: false, error: friendlyError(e, 'No pudimos crear el pedido. Probá de nuevo en unos minutos.') }
   }
 }

@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { db } from '@/lib/db'
 import { requireAdmin } from './guard'
 import { SOLD } from './queries'
+import { friendlyError } from '@/lib/errors'
 
 const STATUSES = ['PENDING', 'PAID', 'PREPARING', 'SHIPPED', 'READY_FOR_PICKUP', 'DELIVERED', 'CANCELLED', 'REFUNDED'] as const
 const CLOSED = new Set(['CANCELLED', 'REFUNDED'])
@@ -46,7 +47,7 @@ export async function setOrderStatus(orderId: string, next: string): Promise<Act
       }
     })
   } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : 'No se pudo actualizar el pedido' }
+    return { ok: false, error: friendlyError(e, 'No se pudo actualizar el pedido. Probá de nuevo.') }
   }
 
   revalidatePath('/admin', 'layout')

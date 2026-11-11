@@ -46,7 +46,7 @@ export function Hero() {
           transition={{ delay: 0.4, duration: 0.6 }}
           className="mt-5 max-w-lg text-lg text-white/85"
         >
-          Indumentaria y equipamiento para running, hockey, pádel, tenis, trekking, golf y pesca. Diseñado en Concepción del Uruguay.
+          Indumentaria y equipamiento para running, hockey, pádel, outdoor, niños y pesca. Diseñado en Concepción del Uruguay.
         </motion.p>
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 20 }}

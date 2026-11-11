@@ -1,3 +1,4 @@
+import path from 'node:path'
 import type { NextConfig } from 'next'
 
 // Fotos subidas desde el admin (Neon Object Storage)
@@ -11,6 +12,8 @@ const storageHost = (() => {
 })()
 
 const nextConfig: NextConfig = {
+  // Raíz del proyecto explícita (hay otro package.json en la carpeta del usuario que confunde a Next)
+  outputFileTracingRoot: path.join(__dirname),
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: storageHost ? [{ protocol: 'https', hostname: storageHost }] : [],

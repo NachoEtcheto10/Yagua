@@ -20,13 +20,11 @@ export default async function OrdersPage({ searchParams }: { searchParams: SP })
 
   const where: Prisma.OrderWhereInput = {
     ...(status && { status }),
-    ...(q && {
-      OR: [
-        ...(/^\d+$/.test(q.replace('#', '')) ? [{ number: Number(q.replace('#', '')) }] : []),
-        { customerName: { contains: q, mode: 'insensitive' as const } },
-        { email: { contains: q, mode: 'insensitive' as const } },
-        { dni: { contains: q } },
-      ],
+    // "#147" o "147" (hasta 6 cifras) busca el número de pedido; más cifras, un DNI; si no, nombre o e-mail
+    ...(q && /^#?\d{1,6}$/.test(q) && { number: Number(q.replace('#', '')) }),
+    ...(q && /^\d{7,8}$/.test(q) && { dni: q }),
+    ...(q && !/^#?\d+$/.test(q) && {
+      OR: [{ customerName: { contains: q, mode: 'insensitive' as const } }, { email: { contains: q, mode: 'insensitive' as const } }],
     }),
   }
   const [orders, total, counts] = await Promise.all([

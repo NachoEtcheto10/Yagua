@@ -43,14 +43,25 @@ export default async function ResultPage({ searchParams }: Props) {
       {!paid && !rejected && order.paymentMethod === 'BANK_TRANSFER' && (
         <div className="mt-8 border-2 border-brand-ink p-5">
           <p className="font-display text-xl font-bold uppercase">Datos para transferir</p>
-          {/* TODO: datos bancarios reales del cliente */}
           <dl className="mt-3 grid gap-1 text-sm sm:grid-cols-[140px_1fr]">
-            <dt className="text-brand-muted">Titular</dt><dd>{SITE.legalName}</dd>
-            <dt className="text-brand-muted">CBU</dt><dd>TODO: CBU</dd>
-            <dt className="text-brand-muted">Alias</dt><dd>TODO.ALIAS.YAGUA</dd>
             <dt className="text-brand-muted">Importe</dt><dd className="font-bold">{formatPrice(order.total)}</dd>
+            {SITE.bank.cbu && (
+              <>
+                <dt className="text-brand-muted">Titular</dt><dd>{SITE.bank.holder || SITE.legalName}</dd>
+                <dt className="text-brand-muted">CBU</dt><dd className="font-mono">{SITE.bank.cbu}</dd>
+                {SITE.bank.alias && <><dt className="text-brand-muted">Alias</dt><dd className="font-mono">{SITE.bank.alias}</dd></>}
+              </>
+            )}
           </dl>
-          <p className="mt-3 text-sm">Mandanos el comprobante por <a className="underline" href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(`Hola! Te paso el comprobante del pedido #${order.number}`)}`}>WhatsApp</a> indicando el número de pedido.</p>
+          {SITE.bank.cbu ? (
+            <p className="mt-3 text-sm">Mandanos el comprobante por <a className="underline" href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(`¡Hola! Te paso el comprobante del pedido #${order.number}`)}`}>WhatsApp</a> indicando el número de pedido.</p>
+          ) : (
+            <p className="mt-3 text-sm">
+              Escribinos por{' '}
+              <a className="font-semibold underline" href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(`¡Hola! Hice el pedido #${order.number} y quiero pagarlo por transferencia.`)}`} target="_blank" rel="noopener">WhatsApp</a>{' '}
+              y te pasamos el CBU y el alias. Cuando transfieras, mandanos el comprobante con el número de pedido.
+            </p>
+          )}
         </div>
       )}
       {!paid && !rejected && order.paymentMethod === 'CASH' && (

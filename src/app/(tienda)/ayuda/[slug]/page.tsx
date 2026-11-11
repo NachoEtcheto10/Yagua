@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { Container } from '@/components/ui/Container'
 import { COMMERCE, SITE } from '@/lib/site'
 
-// TODO: textos legales y políticas definitivas, a validar con el cliente.
+// TODO: textos legales estándar para la demo; validar con el cliente (y su contador/abogado) antes de publicar.
 const PAGES: Record<string, { title: string; body: string[] }> = {
   envios: {
     title: 'Envíos y retiros',
@@ -35,11 +35,24 @@ const PAGES: Record<string, { title: string; body: string[] }> = {
   },
   terminos: {
     title: 'Términos y condiciones',
-    body: ['TODO: términos y condiciones de uso del sitio y de compra. Todos los precios publicados incluyen IVA.'],
+    body: [
+      `Este sitio es la tienda online de ${SITE.legalName}, con local en ${SITE.address}, ${SITE.city}. Al comprar aceptás estas condiciones.`,
+      'Los precios están expresados en pesos argentinos, con IVA incluido, y pueden cambiar sin aviso previo. El precio que vale es el que figura al confirmar el pedido.',
+      'Los pedidos quedan sujetos a disponibilidad de stock y a la acreditación del pago. Si un producto se agota después de la compra, te avisamos y te devolvemos el dinero o te ofrecemos un cambio.',
+      'Las fotos son ilustrativas: los colores pueden variar levemente según la pantalla.',
+      'Podés arrepentirte de la compra dentro de los 10 días corridos desde que recibís el producto, sin dar motivos (Ley 24.240 de Defensa del Consumidor). Usá el botón de arrepentimiento al pie de la página.',
+      `Ante cualquier consulta, escribinos por WhatsApp al ${SITE.whatsappDisplay} o acercate al local.`,
+    ],
   },
   privacidad: {
     title: 'Política de privacidad',
-    body: ['TODO: política de privacidad conforme a la Ley 25.326 de Protección de Datos Personales.'],
+    body: [
+      'Usamos tus datos (nombre, e-mail, teléfono, DNI y dirección) solo para procesar tus pedidos, enviarlos y contactarte por tu compra.',
+      'Si te suscribís al newsletter, te mandamos novedades y promociones. Te podés dar de baja cuando quieras.',
+      'No vendemos ni compartimos tus datos con terceros, salvo con quienes hacen posible la compra: Mercado Pago para el cobro y la empresa de correo para el envío.',
+      'Los pagos con tarjeta los procesa Mercado Pago: nosotros nunca vemos ni guardamos los datos de tu tarjeta.',
+      'Podés pedir acceder, corregir o borrar tus datos escribiéndonos por WhatsApp (Ley 25.326 de Protección de Datos Personales). La Agencia de Acceso a la Información Pública es el órgano de control de esta ley.',
+    ],
   },
 }
 

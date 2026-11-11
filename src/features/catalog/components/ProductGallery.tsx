@@ -33,7 +33,7 @@ export function ProductGallery({ images }: { images: Img[] }) {
 
   return (
     <div className="lg:sticky lg:top-24">
-      <div className="flex flex-col-reverse gap-3 lg:flex-row">
+      <div className="flex min-w-0 flex-col-reverse gap-3 lg:flex-row">
         {images.length > 1 && (
           <ul className="scrollbar-none flex gap-2 overflow-x-auto lg:max-h-[640px] lg:w-20 lg:flex-col lg:overflow-y-auto">
             {images.map((img, i) => (

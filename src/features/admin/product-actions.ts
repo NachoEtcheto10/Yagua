@@ -5,6 +5,7 @@ import { storageEnabled, uploadImage } from '@/lib/storage'
 import { Prisma } from '@/generated/prisma/client'
 import { requireAdmin } from './guard'
 import { productSchema, type ProductInput } from './product-schema'
+import { friendlyError } from '@/lib/errors'
 
 export type SaveResult = { ok: true; id: string } | { ok: false; error: string; fieldErrors?: Record<string, string> }
 
@@ -28,6 +29,10 @@ export async function saveProduct(input: ProductInput): Promise<SaveResult> {
     return { ok: false, error: parsed.error.issues[0]?.message ?? 'Revisá los datos', fieldErrors }
   }
   const d = parsed.data
+
+  // Dirección repetida: se avisa antes de intentar guardar
+  const clash = await db.product.findFirst({ where: { slug: d.slug, ...(d.id && { NOT: { id: d.id } }) }, select: { name: true } })
+  if (clash) return { ok: false, error: `Ya existe otro producto con esa dirección (${clash.name})`, fieldErrors: { slug: 'Ya está en uso, cambiala' } }
 
   const category = await db.category.findUnique({ where: { id: d.categoryId }, select: { sportId: true } })
   if (!category || category.sportId !== d.sportId) return { ok: false, error: 'La categoría no corresponde al deporte elegido', fieldErrors: { categoryId: 'Elegí una categoría de este deporte' } }
@@ -78,13 +83,14 @@ export async function saveProduct(input: ProductInput): Promise<SaveResult> {
     return { ok: true, id }
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
-      const target = String(e.meta?.target ?? '')
+      // Con el adaptador de Postgres el nombre de la restricción viene en el mensaje, no en meta.target
+      const target = `${JSON.stringify(e.meta ?? {})} ${e.message}`
       if (target.includes('slug')) return { ok: false, error: 'Ya existe otro producto con esa URL', fieldErrors: { slug: 'Ya está en uso' } }
       if (target.includes('sku')) return { ok: false, error: 'Hay un SKU repetido con otro producto. Dejá el SKU vacío para generarlo solo.' }
       if (target.includes('size')) return { ok: false, error: 'Hay talles/colores repetidos' }
     }
     console.error('saveProduct', e)
-    return { ok: false, error: e instanceof Error ? e.message : 'No se pudo guardar' }
+    return { ok: false, error: friendlyError(e, 'No se pudo guardar. Probá de nuevo y, si sigue, avisanos.') }
   }
 }
 
@@ -97,7 +103,7 @@ export async function uploadProductImage(form: FormData): Promise<{ ok: true; ur
     return { ok: true, url: await uploadImage(file, 'products') }
   } catch (e) {
     console.error('uploadProductImage', e)
-    return { ok: false, error: e instanceof Error ? e.message : 'No se pudo subir la foto' }
+    return { ok: false, error: friendlyError(e, 'No se pudo subir la foto. Probá de nuevo.') }
   }
 }
 

@@ -93,8 +93,9 @@ export function ProductView({ product }: { product: ProductViewData }) {
     setTimeout(() => setAdded(false), 1800)
   }
 
+  // [&>*]:min-w-0: las columnas pueden achicarse más que su contenido (si no, las miniaturas ensanchan la página en el celular)
   return (
-    <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-14">
+    <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-14 [&>*]:min-w-0">
       <ProductGallery images={images} />
 
       <div>

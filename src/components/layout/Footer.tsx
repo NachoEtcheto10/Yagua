@@ -28,7 +28,7 @@ export function Footer({ sports }: { sports: NavSport[] }) {
             <p className="mt-5 max-w-xs text-sm text-white/70">{SITE.description}</p>
             <div className="mt-6 flex gap-3">
               <a href={SITE.instagram} target="_blank" rel="noopener" aria-label="Instagram" className="grid h-10 w-10 place-items-center border border-white/30 hover:bg-white hover:text-brand-ink"><InstagramIcon /></a>
-              <a href={SITE.facebook} target="_blank" rel="noopener" aria-label="Facebook" className="grid h-10 w-10 place-items-center border border-white/30 hover:bg-white hover:text-brand-ink"><FacebookIcon /></a>
+              {SITE.facebook && <a href={SITE.facebook} target="_blank" rel="noopener" aria-label="Facebook" className="grid h-10 w-10 place-items-center border border-white/30 hover:bg-white hover:text-brand-ink"><FacebookIcon /></a>}
               <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener" aria-label="WhatsApp" className="grid h-10 w-10 place-items-center border border-white/30 hover:bg-white hover:text-brand-ink"><MessageCircle size={18} /></a>
             </div>
           </div>
@@ -86,7 +86,7 @@ export function Footer({ sports }: { sports: NavSport[] }) {
         <div className="border-t border-white/15">
           <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-6 text-xs text-white/60 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-10">
             <p>
-              © {new Date().getFullYear()} {SITE.legalName} · CUIT {SITE.cuit} · Todos los precios incluyen IVA.
+              © {new Date().getFullYear()} {SITE.legalName}{SITE.cuit && ` · CUIT ${SITE.cuit}`} · Todos los precios incluyen IVA.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener" className="underline hover:text-white">

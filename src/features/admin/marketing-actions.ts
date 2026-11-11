@@ -5,6 +5,7 @@ import { db } from '@/lib/db'
 import { uploadImage } from '@/lib/storage'
 import { Prisma } from '@/generated/prisma/client'
 import { requireAdmin } from './guard'
+import { friendlyError } from '@/lib/errors'
 
 export type FormState = { ok?: boolean; error?: string } | undefined
 
@@ -88,7 +89,7 @@ export async function saveCampaign(_: FormState, form: FormData): Promise<FormSt
     try {
       image = await uploadImage(file, 'campaigns')
     } catch (e) {
-      return { error: e instanceof Error ? e.message : 'No se pudo subir la imagen' }
+      return { error: friendlyError(e, 'No se pudo subir la imagen. Probá de nuevo.') }
     }
   }
   if (!d.id && !image) return { error: 'Subí la imagen del banner' }

@@ -11,7 +11,7 @@ export const SITE = {
   name: 'Yaguá',
   url: process.env.NEXT_PUBLIC_SITE_URL || vercelUrl || 'http://localhost:3000',
   description:
-    'Indumentaria y equipamiento deportivo de Concepción del Uruguay: running, hockey, pádel, tenis, trekking, golf y King Fishing.',
+    'Indumentaria y equipamiento deportivo de Concepción del Uruguay: running, hockey, pádel, outdoor, niños y King Fishing.',
   city: 'Concepción del Uruguay (3260), Entre Ríos',
   address: '9 de Julio 865',
   mapsQuery: '9 de Julio 865, Concepción del Uruguay, Entre Ríos',
@@ -20,9 +20,11 @@ export const SITE = {
   whatsappDisplay: '+54 9 3442 48-8220',
   email: 'hola@yagua.com.ar', // TODO
   instagram: 'https://www.instagram.com/yagua_sport/',
-  facebook: 'https://facebook.com/', // TODO
-  legalName: 'TODO: razón social', // TODO
-  cuit: 'TODO', // TODO
+  facebook: '', // TODO: página de Facebook (el ícono aparece cuando esté cargada)
+  legalName: 'Yaguá Sports', // TODO: razón social exacta
+  cuit: '', // TODO: CUIT (se muestra en el pie cuando esté cargado)
+  /** Datos para transferencias. Mientras estén vacíos, se ofrece pedirlos por WhatsApp. TODO: CBU y alias reales */
+  bank: { holder: '', cbu: '', alias: '' },
 } as const
 
 export const COMMERCE = {

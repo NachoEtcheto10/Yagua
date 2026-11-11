@@ -127,7 +127,7 @@ export function ProductForm({ initial, options, storageReady }: { initial: Produ
     e.preventDefault()
     setMessage(null)
     startSave(async () => {
-      const r = await saveProduct({ ...v, price: v.price as number, salePrice: v.salePrice as number | null, variants: v.variants as ProductInput['variants'] })
+      const r = await saveProduct({ ...v, slug: slugify(v.slug), price: v.price as number, salePrice: v.salePrice as number | null, variants: v.variants as ProductInput['variants'] })
       if (!r.ok) {
         setErrors(r.fieldErrors ?? {})
         setMessage({ kind: 'error', text: r.error })
@@ -162,7 +162,13 @@ export function ProductForm({ initial, options, storageReady }: { initial: Produ
                 <input className={input} value={v.name} onChange={(e) => { set('name', e.target.value); if (!slugTouched) set('slug', slugify(e.target.value)) }} placeholder="Ej: Remera Dry Fit Mujer" />
               </Field>
               <Field label="Dirección en la tienda" error={errors.slug} hint={`yagua.com.ar/…/${v.slug || 'nombre-del-producto'}`}>
-                <input className={input} value={v.slug} onChange={(e) => { setSlugTouched(true); set('slug', slugify(e.target.value)) }} />
+                {/* Mientras escribe se permiten guiones al final; al salir del campo se limpia del todo */}
+                <input
+                  className={input}
+                  value={v.slug}
+                  onChange={(e) => { setSlugTouched(true); set('slug', e.target.value.toLowerCase().replace(/\s+/g, '-')) }}
+                  onBlur={() => set('slug', slugify(v.slug))}
+                />
               </Field>
               <Field label="Descripción" error={errors.description}>
                 <textarea className={cn(input, 'min-h-36')} value={v.description} onChange={(e) => set('description', e.target.value)} placeholder="Contá para qué sirve, la tela, el calce…" />

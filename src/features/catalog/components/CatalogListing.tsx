@@ -32,7 +32,7 @@ export async function CatalogListing({
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[240px_1fr] xl:grid-cols-[260px_1fr]">
+    <div className="grid gap-8 lg:grid-cols-[240px_1fr] xl:grid-cols-[260px_1fr] [&>*]:min-w-0">
       <Filters options={options} total={result.total} hideGender={hideGender} />
       <div>
         <div className="mb-6 flex items-center justify-between gap-3">

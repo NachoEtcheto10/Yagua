@@ -1,4 +1,5 @@
 import 'server-only'
+import { revalidateTag } from 'next/cache'
 import crypto from 'node:crypto'
 import { MercadoPagoConfig, Payment, Preference } from 'mercadopago'
 import { db } from '@/lib/db'
@@ -99,4 +100,5 @@ export async function syncPayment(paymentId: string) {
       for (const it of order.items) await tx.productVariant.update({ where: { id: it.variantId }, data: { stock: { increment: it.quantity } } })
     }
   })
+  revalidateTag('catalog')
 }
