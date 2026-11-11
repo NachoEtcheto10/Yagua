@@ -10,14 +10,19 @@ type Props = {
   title?: string
 }
 
+// Punto de la foto que tiene que quedar a la vista cuando se recorta (por defecto, el centro)
+const FOCUS: Record<string, string> = {
+  ninos: 'object-[60%_6%]', // las caras de los chicos están arriba
+}
+
 /** Portada de cada deporte. King Fishing tiene su propia estética (azul río + dorado). */
 export function SportHero({ sport, categories, activeCategory, title }: Props) {
   const kf = sport.isSubBrand
   return (
     <section className={cn('relative overflow-hidden', kf ? 'bg-kf-deep' : 'bg-brand-primary')}>
-      <Image src={sport.heroImage} alt="" fill priority sizes="100vw" className="object-cover opacity-70" />
+      <Image src={sport.heroImage} alt="" fill priority sizes="100vw" className={cn('object-cover opacity-70', FOCUS[sport.slug])} />
       <div className={cn('absolute inset-0', kf ? 'bg-gradient-to-t from-kf-deep via-kf-deep/50 to-transparent' : 'bg-gradient-to-t from-black/85 via-black/30 to-black/5')} />
-      <div className="relative mx-auto flex min-h-[44vh] max-w-[1440px] flex-col justify-end px-4 pb-8 pt-24 sm:px-6 lg:min-h-[52vh] lg:px-10 lg:pb-12">
+      <div className="relative mx-auto flex min-h-[60vh] max-w-[1440px] flex-col justify-end px-4 pb-8 pt-24 sm:min-h-[44vh] sm:px-6 lg:min-h-[52vh] lg:px-10 lg:pb-12">
         <nav aria-label="Ubicación" className="text-sm text-white/70">
           <Link href="/" className="hover:text-white">Inicio</Link>
           <span className="mx-2">/</span>

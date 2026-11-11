@@ -4,7 +4,7 @@ import { Container } from '@/components/ui/Container'
 export default function Loading() {
   return (
     <div aria-busy="true" aria-label="Cargando productos">
-      <div className="relative min-h-[44vh] animate-pulse bg-brand-primary lg:min-h-[52vh]">
+      <div className="relative min-h-[60vh] animate-pulse bg-brand-primary sm:min-h-[44vh] lg:min-h-[52vh]">
         <div className="absolute bottom-8 left-4 space-y-4 sm:left-6 lg:bottom-12 lg:left-10">
           <div className="h-14 w-64 bg-white/10 lg:h-20 lg:w-96" />
           <div className="h-4 w-72 bg-white/10" />
