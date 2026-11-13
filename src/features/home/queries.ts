@@ -6,16 +6,17 @@ const opts = { revalidate: 120, tags: ['catalog'] }
 // En desarrollo no se cachea (siempre muestra lo que hay en la base)
 const homeCache: typeof unstable_cache = process.env.NODE_ENV === 'development' ? ((fn) => fn) : unstable_cache
 
-/** Campaña vigente para mostrar en la home (la que empezó más recientemente) */
-export const getActiveCampaign = homeCache(
+/** Campañas vigentes para el carrusel de la home (la que empezó más recientemente primero) */
+export const getActiveCampaigns = homeCache(
   async () => {
     const now = new Date()
-    return db.campaign.findFirst({
+    return db.campaign.findMany({
       where: { active: true, showOnHome: true, startsAt: { lte: now }, endsAt: { gte: now } },
       orderBy: { startsAt: 'desc' },
+      select: { id: true, title: true, subtitle: true, image: true, ctaLabel: true, ctaHref: true },
     })
   },
-  ['home', 'campaign'],
+  ['home', 'campaigns'],
   opts,
 )
 

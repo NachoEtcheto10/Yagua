@@ -10,17 +10,18 @@ import { Ambassadors, Players, SponsorsAndAssociations } from '@/features/home/C
 import { Hero } from '@/features/home/Hero'
 import { Litoral } from '@/features/home/Litoral'
 import { ProductTabs } from '@/features/home/ProductTabs'
-import { getActiveCampaign, getCommunity } from '@/features/home/queries'
+import { CampaignCarousel } from '@/features/home/CampaignCarousel'
+import { getActiveCampaigns, getCommunity } from '@/features/home/queries'
 
 export const revalidate = 300
 
 export default async function HomePage() {
-  const [sports, newArrivals, bestSellers, kingFishing, campaign, community] = await Promise.all([
+  const [sports, newArrivals, bestSellers, kingFishing, campaigns, community] = await Promise.all([
     getSports(),
     getNewArrivals(10),
     getBestSellers(10),
     getBySport('king-fishing', 6),
-    getActiveCampaign(),
+    getActiveCampaigns(),
     getCommunity(),
   ])
   const mainSports = sports.filter((s) => !s.isSubBrand) // 8 tarjetas: grilla de 4×2 completa
@@ -94,24 +95,12 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* 4. Campaña de temporada (editable desde el admin). Los banners traen el texto en la imagen. */}
-      {campaign && (
+      {/* 4. Campañas y eventos (editables desde el admin): carrusel si hay más de una */}
+      {campaigns.length > 0 && (
         <section className="py-10 lg:py-14">
           <Container>
             <Reveal>
-              <Link href={campaign.ctaHref ?? '/ofertas'} className="group relative block overflow-hidden bg-brand-mist">
-                <Image
-                  src={campaign.image}
-                  alt={`${campaign.title}${campaign.subtitle ? `. ${campaign.subtitle}` : ''}`}
-                  width={1580}
-                  height={600}
-                  sizes="(min-width: 1440px) 1360px, 100vw"
-                  className="h-auto w-full transition duration-700 group-hover:scale-[1.02]"
-                />
-                <span className={`${buttonClass.primary} absolute bottom-4 right-4 hidden sm:inline-flex`}>
-                  {campaign.ctaLabel ?? 'Ver más'} <ArrowRight size={20} className="transition group-hover:translate-x-1" />
-                </span>
-              </Link>
+              <CampaignCarousel slides={campaigns} />
             </Reveal>
           </Container>
         </section>
