@@ -648,6 +648,18 @@ async function seedDemoActivity() {
 }
 
 async function main() {
+  // Neon apaga la base cuando no se usa: la despertamos ANTES de borrar nada, así un corte al arrancar
+  // no deja la tienda a medio cargar
+  for (let intento = 1; ; intento++) {
+    try {
+      await db.$queryRaw`SELECT 1`
+      break
+    } catch (e) {
+      if (intento >= 5) throw e
+      console.log(`La base está despertando, reintento ${intento}…`)
+      await new Promise((r) => setTimeout(r, 3000 * intento))
+    }
+  }
   console.log('Borrando datos de catálogo, comunidad y campañas…')
   await db.$transaction([
     db.orderItem.deleteMany(),
@@ -770,6 +782,35 @@ async function main() {
   }
   console.log(`${TIENDANUBE.length} productos de Tiendanube cargados`)
 
+  // Colaboración con la Federación Argentina de Pádel: lo más nuevo de la tienda (TODO: precio y talles reales)
+  const FAP = [
+    {
+      slug: 'remera-fap-hombre', name: 'Remera Oficial FAP Hombre · Nacional Libres 2026', gender: 'HOMBRE' as Gender,
+      sizes: ['S', 'M', 'L', 'XL', 'XXL'], image: '/products/fap/remera-fap-hombre.webp',
+      description: 'Remera oficial de la Federación Argentina de Pádel para el Nacional Libres 2026, diseñada y confeccionada por Yaguá. Tela técnica liviana y de secado rápido, con el escudo de la FAP y los ojos de Yaguá en el frente.',
+      specs: [{ label: 'Tela', value: 'Dry Fit de secado rápido' }, { label: 'Cuello', value: 'Redondo' }, { label: 'Frente', value: 'Escudo FAP + logo Yaguá' }, { label: 'Espalda', value: 'Uruguai · Nacional Libres 2026' }, { label: 'Diseño y confección', value: 'Yaguá, Concepción del Uruguay' }],
+    },
+    {
+      slug: 'remera-fap-mujer', name: 'Remera Oficial FAP Mujer · Nacional Libres 2026', gender: 'MUJER' as Gender,
+      sizes: ['XS', 'S', 'M', 'L', 'XL'], image: '/products/fap/remera-fap-mujer.webp',
+      description: 'Remera oficial de la Federación Argentina de Pádel para el Nacional Libres 2026, diseñada y confeccionada por Yaguá. Corte entallado con escote en V, tela técnica liviana y de secado rápido.',
+      specs: [{ label: 'Tela', value: 'Dry Fit de secado rápido' }, { label: 'Cuello', value: 'En V, corte entallado' }, { label: 'Frente', value: 'Escudo FAP + logo Yaguá' }, { label: 'Espalda', value: 'Uruguai · Nacional Libres 2026' }, { label: 'Diseño y confección', value: 'Yaguá, Concepción del Uruguay' }],
+    },
+  ]
+  for (const [i, f] of FAP.entries()) {
+    await db.product.create({
+      data: {
+        slug: f.slug, name: f.name, description: f.description, specs: f.specs,
+        price: 39900, gender: f.gender, tags: ['NUEVO', 'DESTACADO'], sizeGuide: 'indumentaria', soldCount: 140 - i * 10,
+        createdAt: new Date(now + 60_000 - i * 1000), // las más nuevas de la tienda
+        sportId: sportIds.padel, categoryId: categoryIds['padel/indumentaria'], brandId: brands.yagua.id,
+        images: { create: [{ url: f.image, alt: f.name, color: null, sortOrder: 0 }] },
+        variants: { create: f.sizes.map((size, j) => ({ sku: `FAP-${f.gender === 'MUJER' ? 'M' : 'H'}-${size}`, size, color: 'Azul marino', colorHex: '#1d2b4f', stock: 6 + ((j * 5) % 9) })) },
+      },
+    })
+  }
+  console.log('2 remeras de la colaboración FAP cargadas')
+
 
   for (const [i, a] of AMBASSADORS.entries()) {
     await db.ambassador.create({
@@ -790,6 +831,11 @@ async function main() {
         slug: 'cyber-monday', title: 'Cyber Monday', subtitle: 'Las mejores ofertas y promociones, hasta el lunes 16 de noviembre.',
         ctaLabel: 'Ver ofertas', ctaHref: '/ofertas', image: '/campaigns/cyber-monday.webp',
         startsAt: new Date('2026-11-01T00:00:00-03:00'), endsAt: new Date('2026-11-16T23:59:59-03:00'),
+      },
+      {
+        slug: 'fap-yagua', title: 'FAP × Yaguá', subtitle: 'Indumentaria oficial de la Federación Argentina de Pádel · Nacional Libres 2026.',
+        ctaLabel: 'Ver la colección', ctaHref: '/padel/indumentaria', image: '/campaigns/fap-yagua.webp',
+        startsAt: new Date('2026-11-10T00:00:00-03:00'), endsAt: new Date('2027-03-31T23:59:59-03:00'),
       },
       {
         slug: 'summer-sale', title: 'Summer Sale', subtitle: 'Hasta 30% OFF + 3 y 6 cuotas sin interés.',

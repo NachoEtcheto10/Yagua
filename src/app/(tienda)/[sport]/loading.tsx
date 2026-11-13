@@ -27,7 +27,7 @@ export default function Loading() {
             <ul className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-4 md:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 8 }, (_, i) => (
                 <li key={i} className="animate-pulse">
-                  <div className="aspect-square bg-brand-mist" />
+                  <div className="aspect-[4/5] bg-brand-mist" />
                   <div className="mt-3 h-4 w-3/4 bg-brand-mist" />
                   <div className="mt-2 h-4 w-1/3 bg-brand-mist" />
                 </li>

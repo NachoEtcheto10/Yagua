@@ -13,8 +13,9 @@ export function ProductCard({ product, priority, className }: { product: Product
   const badge = off ? `-${off}%` : product.tags.map((t) => TAG_LABEL[t]).find(Boolean)
   return (
     <Link href={product.href} className={cn('group flex flex-col', className)}>
-      {/* Foto: zoom + cambio a la segunda imagen al pasar el mouse */}
-      <div className="relative aspect-square overflow-hidden bg-brand-mist">
+      {/* Foto: llena toda la tarjeta (4:5, la forma de las fotos de producto) sin bordes de color.
+          Zoom + cambio a la segunda imagen al pasar el mouse */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-white">
         {main && (
           <Image
             src={main.url}
@@ -23,7 +24,7 @@ export function ProductCard({ product, priority, className }: { product: Product
             priority={priority}
             sizes="(min-width: 1280px) 22vw, (min-width: 768px) 30vw, 48vw"
             className={cn(
-              'object-contain p-3 transition duration-700 ease-out group-hover:scale-105',
+              'object-cover transition duration-700 ease-out group-hover:scale-105',
               hover && 'group-hover:opacity-0',
               !product.inStock && 'opacity-50',
             )}
@@ -35,7 +36,7 @@ export function ProductCard({ product, priority, className }: { product: Product
             alt=""
             fill
             sizes="(min-width: 1280px) 22vw, (min-width: 768px) 30vw, 48vw"
-            className="object-contain p-3 opacity-0 transition duration-700 ease-out group-hover:scale-105 group-hover:opacity-100"
+            className="object-cover opacity-0 transition duration-700 ease-out group-hover:scale-105 group-hover:opacity-100"
           />
         )}
         {badge && (

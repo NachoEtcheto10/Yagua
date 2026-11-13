@@ -24,8 +24,8 @@ export function RecentlyViewed({ exclude }: { exclude?: string }) {
         {items.map((p) => (
           <li key={p.id} className="w-36 shrink-0">
             <Link href={p.href} className="group block">
-              <span className="relative block aspect-square bg-brand-mist">
-                {p.images[0] && <Image src={p.images[0].url} alt={p.images[0].alt} fill sizes="144px" className="object-contain p-2 transition group-hover:scale-105" />}
+              <span className="relative block aspect-[4/5] overflow-hidden bg-white">
+                {p.images[0] && <Image src={p.images[0].url} alt={p.images[0].alt} fill sizes="144px" className="object-cover transition group-hover:scale-105" />}
               </span>
               <span className="mt-2 block truncate text-xs">{p.name}</span>
               <Price price={p.price} salePrice={p.salePrice} size="sm" />

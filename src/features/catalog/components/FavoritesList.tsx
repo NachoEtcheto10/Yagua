@@ -35,8 +35,8 @@ export function FavoritesList() {
       {items.map((p) => (
         <li key={p.id} className="relative">
           <Link href={p.href} className="group block">
-            <span className="relative block aspect-square bg-brand-mist">
-              {p.images[0] && <Image src={p.images[0].url} alt={p.images[0].alt} fill sizes="25vw" className="object-contain p-3 transition group-hover:scale-105" />}
+            <span className="relative block aspect-[4/5] overflow-hidden bg-white">
+              {p.images[0] && <Image src={p.images[0].url} alt={p.images[0].alt} fill sizes="25vw" className="object-cover transition group-hover:scale-105" />}
             </span>
             <Price price={p.price} salePrice={p.salePrice} size="sm" className="mt-3" />
             <span className="text-sm">{p.name}</span>

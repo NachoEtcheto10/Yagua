@@ -28,7 +28,7 @@ export function ProductGallery({ images }: { images: Img[] }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [full, images.length])
 
-  if (!current) return <div className="aspect-square bg-brand-mist" />
+  if (!current) return <div className="aspect-[4/5] bg-brand-mist" />
   const go = (dir: 1 | -1) => setIndex((i) => (i + dir + images.length) % images.length)
 
   return (
@@ -43,16 +43,16 @@ export function ProductGallery({ images }: { images: Img[] }) {
                   onClick={() => setIndex(i)}
                   aria-label={`Ver foto ${i + 1}`}
                   aria-current={i === safe}
-                  className={cn('relative block h-20 w-20 bg-brand-mist ring-offset-2 transition', i === safe ? 'ring-2 ring-brand-ink' : 'opacity-70 hover:opacity-100')}
+                  className={cn('relative block h-20 w-20 overflow-hidden bg-white ring-offset-2 transition', i === safe ? 'ring-2 ring-brand-ink' : 'opacity-70 hover:opacity-100')}
                 >
-                  <Image src={img.url} alt="" fill sizes="80px" className="object-contain p-1" />
+                  <Image src={img.url} alt="" fill sizes="80px" className="object-cover" />
                 </button>
               </li>
             ))}
           </ul>
         )}
         <div
-          className="relative aspect-square flex-1 cursor-zoom-in overflow-hidden bg-brand-mist"
+          className="relative aspect-[4/5] flex-1 cursor-zoom-in overflow-hidden bg-white"
           onMouseMove={(e) => {
             const r = e.currentTarget.getBoundingClientRect()
             setZoom({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 })
@@ -75,7 +75,7 @@ export function ProductGallery({ images }: { images: Img[] }) {
                 fill
                 priority
                 sizes="(min-width: 1024px) 55vw, 100vw"
-                className="object-contain p-4 transition-transform duration-200"
+                className="object-contain transition-transform duration-200"
                 style={zoom ? { transform: 'scale(2)', transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined}
               />
             </motion.div>

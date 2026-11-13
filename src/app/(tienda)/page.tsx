@@ -11,6 +11,7 @@ import { Hero } from '@/features/home/Hero'
 import { Litoral } from '@/features/home/Litoral'
 import { ProductTabs } from '@/features/home/ProductTabs'
 import { CampaignCarousel } from '@/features/home/CampaignCarousel'
+import { Collaborations } from '@/features/home/Collaborations'
 import { getActiveCampaigns, getCommunity } from '@/features/home/queries'
 
 export const revalidate = 300
@@ -105,6 +106,9 @@ export default async function HomePage() {
           </Container>
         </section>
       )}
+
+      {/* 4b. Colaboraciones: FAP × Yaguá */}
+      <Collaborations />
 
       {/* 5. King Fishing */}
       <section className="relative overflow-hidden bg-kf-deep text-white">
