@@ -11,7 +11,7 @@ export const SITE = {
   name: 'Yaguá',
   url: process.env.NEXT_PUBLIC_SITE_URL || vercelUrl || 'http://localhost:3000',
   description:
-    'Indumentaria y equipamiento deportivo de Concepción del Uruguay: running, hockey, pádel, outdoor, niños y King Fishing.',
+    'Indumentaria y equipamiento deportivo de Concepción del Uruguay: running, hockey, pádel, trekking, niños y King Fishing.',
   city: 'Concepción del Uruguay (3260), Entre Ríos',
   address: '9 de Julio 865',
   mapsQuery: '9 de Julio 865, Concepción del Uruguay, Entre Ríos',

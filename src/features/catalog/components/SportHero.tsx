@@ -13,6 +13,7 @@ type Props = {
 // Punto de la foto que tiene que quedar a la vista cuando se recorta (por defecto, el centro)
 const FOCUS: Record<string, string> = {
   ninos: 'object-[60%_6%]', // las caras de los chicos están arriba
+  accesorios: 'object-[50%_38%]', // que se vean los ojos de las medias y la gorra
 }
 
 /** Portada de cada deporte. King Fishing tiene su propia estética (azul río + dorado). */

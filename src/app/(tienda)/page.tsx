@@ -16,6 +16,11 @@ import { getActiveCampaigns, getCommunity } from '@/features/home/queries'
 
 export const revalidate = 300
 
+// Punto de la foto que tiene que quedar a la vista en las tarjetas de deporte (por defecto, el centro)
+const CARD_FOCUS: Record<string, string> = {
+  ninos: 'object-top', // que se vea la cara de la nena entera
+}
+
 export default async function HomePage() {
   const [sports, newArrivals, bestSellers, kingFishing, campaigns, community] = await Promise.all([
     getSports(),
@@ -48,7 +53,7 @@ export default async function HomePage() {
                     alt={s.name}
                     fill
                     sizes={big ? '(min-width: 1024px) 50vw, 50vw' : '(min-width: 1024px) 25vw, 50vw'}
-                    className="object-cover transition duration-700 ease-out group-hover:scale-105"
+                    className={`object-cover transition duration-700 ease-out group-hover:scale-105 ${CARD_FOCUS[s.slug] ?? ''}`}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4 lg:p-6">

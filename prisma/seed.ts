@@ -44,7 +44,7 @@ const SPORTS = [
     categories: [['raquetas', 'Raquetas'], ['pelotitas', 'Pelotitas'], ['indumentaria', 'Indumentaria']],
   },
   {
-    slug: 'trekking', name: 'Outdoor', tagline: 'Abrigo para todo terreno',
+    slug: 'trekking', name: 'Trekking', tagline: 'Abrigo para todo terreno',
     description: 'Camperas, buzos térmicos y pantalones para el frío, el viento y la lluvia.',
     heroImage: '/sports/trekking.webp', cardImage: '/sports/trekking-2.webp',
     categories: [['camperas', 'Camperas y chalecos'], ['buzos', 'Buzos y térmicas'], ['pantalones', 'Pantalones'], ['mochilas', 'Mochilas'], ['accesorios', 'Gorros y cuellos']],
@@ -70,7 +70,7 @@ const SPORTS = [
   {
     slug: 'accesorios', name: 'Accesorios', tagline: 'Los detalles suman',
     description: 'Gorras, medias, bolsos, todo para la playa, anteojos y botellas.',
-    heroImage: '/products/tn/medias-largas-blancas-yagua-1.webp', cardImage: '/products/tn/medias-largas-blancas-yagua-1.webp',
+    heroImage: '/products/accesorios-medias-gorra.webp', cardImage: '/products/accesorios-medias-gorra.webp',
     categories: [['gorras', 'Gorras'], ['medias', 'Medias'], ['bolsos', 'Bolsos'], ['playa', 'Playa y verano'], ['anteojos', 'Anteojos de sol'], ['botellas', 'Botellas']],
   },
 ] as const
