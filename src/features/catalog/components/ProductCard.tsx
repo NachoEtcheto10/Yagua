@@ -16,7 +16,7 @@ export function ProductCard({ product, priority, className }: { product: Product
     <Link href={product.href} className={cn('group flex flex-col', className)}>
       {/* Foto: llena toda la tarjeta (4:5, la forma de las fotos de producto) sin bordes de color.
           Zoom + cambio a la segunda imagen al pasar el mouse */}
-      <Tilt className="relative aspect-[4/5] overflow-hidden bg-white shadow-none transition-shadow duration-500 group-hover:shadow-[0_18px_40px_-18px_rgba(18,181,170,0.55)]">
+      <Tilt className="relative aspect-[4/5] overflow-hidden bg-white">
         {main && (
           <Image
             src={main.url}

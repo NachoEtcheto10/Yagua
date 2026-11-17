@@ -54,19 +54,6 @@ export function KineticBand({ words, tone = 'turquoise', speed = 2.4, tilt = -2 
   )
 }
 
-/** Barra fina arriba de la pantalla que muestra cuánto falta de la página */
-export function ScrollProgress() {
-  const { scrollYProgress } = useScroll()
-  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 })
-  return (
-    <motion.div
-      aria-hidden
-      className="fixed inset-x-0 top-0 z-[60] h-1 origin-left bg-gradient-to-r from-brand-turquoise via-brand-secondary to-brand-accent"
-      style={{ scaleX }}
-    />
-  )
-}
-
 /** Inclina el contenido en 3D siguiendo el mouse (solo con mouse; en celular no hace nada) */
 export function Tilt({ children, className, max = 8 }: { children: ReactNode; className?: string; max?: number }) {
   const reduce = useReducedMotion()

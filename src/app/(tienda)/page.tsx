@@ -60,7 +60,6 @@ export default async function HomePage() {
                     className={`object-cover transition duration-700 ease-out group-hover:scale-105 ${CARD_FOCUS[s.slug] ?? ''}`}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
-                  <div className="absolute inset-0 bg-brand-turquoise opacity-0 mix-blend-multiply transition duration-500 group-hover:opacity-60" />
                   <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4 lg:p-6">
                     <div>
                       <p className="hidden text-sm text-white/80 sm:block">{s.tagline}</p>
