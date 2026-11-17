@@ -16,7 +16,7 @@ const SLIDES = [
   { src: '/sports/running.webp', label: 'Running', pos: 'object-center' },
   { src: '/sports/trekking.webp', label: 'Trekking', pos: 'object-center' },
   { src: '/sports/golf.webp', label: 'Golf', pos: 'object-[60%_50%]' },
-  { src: '/sports/nautica-2.webp', label: 'Río', pos: 'object-center' },
+  { src: '/sports/pesca-hero.webp', label: 'Pesca', pos: 'object-[62%_50%]' },
 ]
 const SLIDE_MS = 5500
 
@@ -30,9 +30,10 @@ export function Hero() {
 
   useEffect(() => {
     if (VIDEO || reduce) return
-    const t = setInterval(() => setI((n) => (n + 1) % SLIDES.length), SLIDE_MS)
-    return () => clearInterval(t)
-  }, [reduce])
+    // Un temporizador por foto: si la persona toca una rayita, esa foto dura su tiempo completo
+    const t = setTimeout(() => setI((n) => (n + 1) % SLIDES.length), SLIDE_MS)
+    return () => clearTimeout(t)
+  }, [i, reduce])
 
   const appear = (delay: number) =>
     reduce ? {} : { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { delay, duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } }

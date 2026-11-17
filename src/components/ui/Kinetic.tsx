@@ -1,58 +1,6 @@
 'use client'
-import { motion, useAnimationFrame, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity, wrap } from 'framer-motion'
-import { useRef, type ReactNode } from 'react'
-import { cn } from '@/lib/format'
-
-/**
- * Cinta de texto gigante que se mueve sola y se acelera con el scroll (cambia de sentido si subís).
- * Va inclinada para cortar la página en diagonal. Respeta "reducir movimiento".
- */
-export function KineticBand({ words, tone = 'turquoise', speed = 2.4, tilt = -2 }: { words: string[]; tone?: 'turquoise' | 'pink' | 'ink' | 'lime'; speed?: number; tilt?: number }) {
-  const reduce = useReducedMotion()
-  const x = useMotionValue(0)
-  const { scrollY } = useScroll()
-  const velocity = useSpring(useVelocity(scrollY), { damping: 50, stiffness: 400 })
-  const boost = useTransform(velocity, [-1500, 0, 1500], [-4, 0, 4], { clamp: false })
-  const dir = useRef(1)
-
-  useAnimationFrame((_, delta) => {
-    if (reduce) return
-    const b = boost.get()
-    if (b < 0) dir.current = -1
-    else if (b > 0) dir.current = 1
-    x.set(wrap(-50, 0, x.get() - dir.current * (speed + Math.abs(b) * speed) * (delta / 1000)))
-  })
-  const translate = useTransform(x, (v) => `${v}%`)
-
-  const colors = {
-    turquoise: 'bg-brand-turquoise text-brand-ink',
-    pink: 'bg-brand-accent text-white',
-    ink: 'bg-brand-ink text-brand-secondary',
-    lime: 'bg-brand-secondary text-brand-ink',
-  }[tone]
-  const line = (
-    <span className="flex shrink-0 items-center">
-      {words.map((w, i) => (
-        <span key={i} className="flex items-center">
-          <span className="px-6 sm:px-10">{w}</span>
-          <span aria-hidden className="inline-flex gap-1.5">
-            <span className="h-5 w-2.5 -skew-x-[18deg] bg-current opacity-40 sm:h-8 sm:w-3.5" />
-          </span>
-        </span>
-      ))}
-    </span>
-  )
-  return (
-    <div className="relative overflow-hidden py-6 sm:py-10" aria-hidden>
-      <div className={cn('py-3 sm:py-5', colors)} style={{ transform: `rotate(${tilt}deg) scale(1.05)` }}>
-        <motion.div className="flex w-max whitespace-nowrap font-display text-4xl font-black uppercase leading-none sm:text-7xl" style={{ x: translate }}>
-          {line}
-          {line}
-        </motion.div>
-      </div>
-    </div>
-  )
-}
+import { motion, useReducedMotion, useSpring } from 'framer-motion'
+import type { ReactNode } from 'react'
 
 /** Inclina el contenido en 3D siguiendo el mouse (solo con mouse; en celular no hace nada) */
 export function Tilt({ children, className, max = 8 }: { children: ReactNode; className?: string; max?: number }) {

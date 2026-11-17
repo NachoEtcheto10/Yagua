@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Carousel } from '@/components/ui/Carousel'
 import { Container, SectionTitle, buttonClass } from '@/components/ui/Container'
-import { KineticBand } from '@/components/ui/Kinetic'
 import { Reveal } from '@/components/ui/Reveal'
 import { ProductCard } from '@/features/catalog/components/ProductCard'
 import { getBestSellers, getBySport, getNewArrivals, getSports } from '@/features/catalog/queries'
@@ -13,7 +12,7 @@ import { Litoral } from '@/features/home/Litoral'
 import { ProductTabs } from '@/features/home/ProductTabs'
 import { CampaignCarousel } from '@/features/home/CampaignCarousel'
 import { Collaborations } from '@/features/home/Collaborations'
-import { ExpandingMedia, HomeFeatures, Manifesto } from '@/features/home/Scrolly'
+import { ExpandingMedia, HomeFeatures } from '@/features/home/Scrolly'
 import { getActiveCampaigns, getCommunity } from '@/features/home/queries'
 
 export const revalidate = 300
@@ -22,6 +21,13 @@ export const revalidate = 300
 const CARD_FOCUS: Record<string, string> = {
   ninos: 'object-top', // que se vea la cara de la nena entera
 }
+
+// Comprá por género: las fotos son los banners de la marca (los modelos quedan al centro)
+const SHOP_BY = [
+  { label: 'Hombre', href: '/buscar?genero=hombre', image: '/campaigns/hombres.webp', alt: 'Dos modelos con remeras deportivas Yaguá', pos: 'object-[50%_30%]' },
+  { label: 'Mujer', href: '/buscar?genero=mujer', image: '/campaigns/damas.webp', alt: 'Dos modelos con tops y calzas Yaguá', pos: 'object-[50%_30%]' },
+  { label: 'Niños', href: '/ninos', image: '/campaigns/ninos.webp', alt: 'Una nena y un nene con remeras Yaguá', pos: 'object-[54%_30%]' },
+]
 
 export default async function HomePage() {
   const [sports, newArrivals, bestSellers, kingFishing, campaigns, community] = await Promise.all([
@@ -39,15 +45,27 @@ export default async function HomePage() {
       {/* 1. Hero */}
       <Hero />
 
-      {/* Cinta cinética: se acelera con el scroll */}
-      <KineticBand tone="ink" words={['Mirada de yaguá', 'Running', 'Hockey', 'Pádel', 'Trekking', 'King Fishing', 'Niños']} />
-
-      {/* Manifiesto: se enciende palabra por palabra con el scroll */}
-      <Manifesto
-        label="Mirada de yaguá"
-        highlight={['yaguareté:', 'litoral']}
-        text="Entrenar, jugar, salir al río. Cada movimiento pide ropa que acompañe. Diseñamos prendas técnicas con la mirada del yaguareté: atentas, firmes y hechas para la gente del litoral que no se queda quieta."
-      />
+      {/* Comprá por: Hombre / Mujer / Niños (fotos de la marca) */}
+      <section className="pt-10 lg:pt-14">
+        <Container>
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            {SHOP_BY.map((c, i) => (
+              <Reveal key={c.label} delay={i * 0.08}>
+                <Link href={c.href} className="group relative block aspect-[3/5] overflow-hidden bg-brand-mist sm:aspect-[4/5]">
+                  <Image src={c.image} alt={c.alt} fill sizes="(min-width: 1024px) 33vw, 34vw" className={`object-cover transition duration-700 ease-out group-hover:scale-105 ${c.pos}`} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 lg:p-6">
+                    <p className="font-display text-xl font-black uppercase leading-none text-white sm:text-3xl lg:text-5xl">{c.label}</p>
+                    <span className="hidden h-10 w-10 shrink-0 place-items-center bg-white text-brand-ink transition group-hover:bg-brand-secondary sm:grid">
+                      <ArrowRight size={20} />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </Container>
+      </section>
 
       {/* Foto que se agranda hasta ocupar la pantalla */}
       <ExpandingMedia
@@ -198,8 +216,6 @@ export default async function HomePage() {
           </div>
         </Container>
       </section>
-
-      <KineticBand tone="pink" tilt={2} speed={2} words={['Hecho en el litoral', 'Concepción del Uruguay', 'Garra de nuestra tierra']} />
 
       {/* 7. Identidad local: somos de Concepción del Uruguay */}
       <Litoral />

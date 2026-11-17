@@ -154,7 +154,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
             className="absolute inset-x-0 top-full hidden border-b border-brand-line bg-white shadow-xl xl:block"
             onMouseEnter={() => setHover(hovered.slug)}
           >
-            <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_1fr_1.3fr] gap-10 px-10 py-10">
+            <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_1fr_auto] gap-10 px-10 py-10">
               <div>
                 <p className="font-display text-sm font-bold uppercase tracking-widest text-brand-muted">{hovered.name}</p>
                 <ul className="mt-4 space-y-2.5">
@@ -181,10 +181,10 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
                   <li><Link href="/personalizados" className="hover:underline">Personalizados para equipos</Link></li>
                 </ul>
               </div>
-              <Link href={`/${hovered.slug}`} className="group relative block aspect-[16/9] overflow-hidden bg-brand-mist">
-                <Image src={hovered.cardImage} alt={hovered.name} fill sizes="35vw" className="object-cover transition duration-700 group-hover:scale-105" />
+              <Link href={`/${hovered.slug}`} className="group relative block aspect-[3/4] w-[300px] overflow-hidden bg-brand-mist">
+                <Image src={hovered.cardImage} alt={hovered.name} fill sizes="300px" className="object-cover object-top transition duration-700 group-hover:scale-105" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                <span className="absolute bottom-5 left-5 font-display text-3xl font-extrabold uppercase italic text-white">
+                <span className="absolute inset-x-5 bottom-5 font-display text-2xl font-extrabold uppercase leading-none text-white">
                   {hovered.tagline ?? hovered.name}
                 </span>
               </Link>

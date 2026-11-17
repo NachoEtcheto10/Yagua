@@ -1,49 +1,10 @@
 'use client'
-import { AnimatePresence, motion, useMotionTemplate, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion'
+import { AnimatePresence, motion, useMotionTemplate, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { ArrowRight, MapPin, PenTool, Shirt, Wind, type LucideIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { buttonClass, Container } from '@/components/ui/Container'
-
-/* ------------------------------------------------------------------ */
-/* 1. Manifiesto: el texto se va encendiendo palabra por palabra       */
-/* ------------------------------------------------------------------ */
-
-function Word({ word, range, progress, highlight }: { word: string; range: [number, number]; progress: MotionValue<number>; highlight: boolean }) {
-  const opacity = useTransform(progress, range, [0.14, 1])
-  return (
-    <motion.span style={{ opacity }} className={`mr-[0.25em] inline-block ${highlight ? 'text-brand-accent' : ''}`}>
-      {word}
-    </motion.span>
-  )
-}
-
-export function Manifesto({ label, text, highlight = [] }: { label: string; text: string; highlight?: string[] }) {
-  const ref = useRef<HTMLParagraphElement>(null)
-  const reduce = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.45'] })
-  const words = text.split(' ')
-  return (
-    <section className="py-20 lg:py-32">
-      <Container className="grid gap-6 lg:grid-cols-[220px_1fr] lg:gap-10">
-        <p className="flex items-center gap-2 self-start pt-2 font-display text-xs font-extrabold uppercase tracking-[0.25em] text-brand-muted">
-          <span className="h-2.5 w-2.5 bg-brand-secondary" />
-          {label}
-        </p>
-        <p ref={ref} className="max-w-5xl font-display text-[1.9rem] font-extrabold leading-[1.12] text-brand-ink sm:text-5xl lg:text-[3.6rem]">
-          {words.map((w, i) =>
-            reduce ? (
-              <span key={i} className={`mr-[0.25em] inline-block ${highlight.includes(w) ? 'text-brand-accent' : ''}`}>{w}</span>
-            ) : (
-              <Word key={i} word={w} progress={scrollYProgress} range={[i / words.length, (i + 1) / words.length]} highlight={highlight.includes(w)} />
-            ),
-          )}
-        </p>
-      </Container>
-    </section>
-  )
-}
 
 /* ------------------------------------------------------------------ */
 /* 2. Foto que se agranda hasta ocupar toda la pantalla                */

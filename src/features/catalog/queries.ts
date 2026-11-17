@@ -151,12 +151,21 @@ function buildOrder(sort: SortKey = 'relevancia'): Prisma.ProductOrderByWithRela
   }
 }
 
+/**
+ * Al filtrar por género (orden por relevancia), primero lo de ese género y después lo unisex,
+ * así "Mujer" no arranca con pelotas de pádel. El enum va HOMBRE, MUJER, UNISEX, NINOS.
+ */
+function genderFirst(f: ProductFilters): Prisma.ProductOrderByWithRelationInput[] {
+  if (!f.gender || f.gender === 'UNISEX' || (f.sort && f.sort !== 'relevancia')) return []
+  return [{ gender: f.gender === 'NINOS' ? 'desc' : 'asc' }]
+}
+
 export const listProducts = cached('listProducts', async (f: ProductFilters) => {
   const pageSize = f.pageSize ?? 12
   const page = Math.max(1, f.page ?? 1)
   const where = buildWhere(f)
   const [rows, total] = await Promise.all([
-    db.product.findMany({ where, orderBy: buildOrder(f.sort), include: cardInclude, skip: (page - 1) * pageSize, take: pageSize }),
+    db.product.findMany({ where, orderBy: genderFirst(f).concat(buildOrder(f.sort)), include: cardInclude, skip: (page - 1) * pageSize, take: pageSize }),
     db.product.count({ where }),
   ])
   let items = rows.map(toCard)
