@@ -2,6 +2,7 @@ import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { buttonClass, Container, SectionTitle } from '@/components/ui/Container'
+import { WipeReveal } from '@/components/ui/Kinetic'
 import { Reveal } from '@/components/ui/Reveal'
 
 // Colaboraciones de la marca. TODO: pasar al admin si suman más (por ahora, la de la FAP)
@@ -34,7 +35,7 @@ export function Collaborations() {
 
           <div className="grid grid-cols-2 gap-3 sm:gap-5">
             {FAP.map((f, i) => (
-              <Reveal key={f.href} delay={i * 0.1}>
+              <WipeReveal key={f.href} delay={i * 0.15} from="left">
                 <Link href={f.href} className="group block">
                   {/* Las imágenes tienen fondo blanco: se ven enteras, sin bordes */}
                   <div className="relative aspect-[673/820] overflow-hidden bg-white">
@@ -45,7 +46,7 @@ export function Collaborations() {
                   </p>
                   <p className="text-sm text-brand-muted">{f.detail}</p>
                 </Link>
-              </Reveal>
+              </WipeReveal>
             ))}
           </div>
         </div>

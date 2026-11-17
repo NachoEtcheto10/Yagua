@@ -2,6 +2,7 @@ import { ArrowRight, Clock, MapPin, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { buttonClass, Container, Rosettes, SectionTitle } from '@/components/ui/Container'
+import { WipeReveal } from '@/components/ui/Kinetic'
 import { Reveal } from '@/components/ui/Reveal'
 import { SITE } from '@/lib/site'
 
@@ -48,14 +49,14 @@ export function Litoral() {
         {/* fotos escalonadas: las de la derecha bajan un poco (va en el Link porque Reveal anima la posición) */}
         <div className="grid grid-cols-2 gap-3 pb-8 sm:gap-4 sm:pb-12">
           {PHOTOS.map((p, i) => (
-            <Reveal key={p.src} delay={i * 0.08}>
+            <WipeReveal key={p.src} delay={i * 0.12}>
               <Link href={p.href} className={`group relative block aspect-[3/4] overflow-hidden bg-white/5 ${i % 2 === 1 ? 'translate-y-8 sm:translate-y-12' : ''}`}>
                 <Image src={p.src} alt={`${p.label} en la costanera de Concepción del Uruguay`} fill sizes="(min-width: 1024px) 24vw, 46vw" className="object-cover transition duration-700 group-hover:scale-105" />
                 <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 pt-10 font-display text-sm font-bold uppercase tracking-wide sm:text-base">
                   {p.label}
                 </span>
               </Link>
-            </Reveal>
+            </WipeReveal>
           ))}
         </div>
       </Container>

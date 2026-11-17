@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Carousel } from '@/components/ui/Carousel'
 import { Container, SectionTitle, buttonClass } from '@/components/ui/Container'
+import { KineticBand } from '@/components/ui/Kinetic'
 import { Reveal } from '@/components/ui/Reveal'
 import { ProductCard } from '@/features/catalog/components/ProductCard'
 import { getBestSellers, getBySport, getNewArrivals, getSports } from '@/features/catalog/queries'
@@ -37,6 +38,9 @@ export default async function HomePage() {
       {/* 1. Hero */}
       <Hero />
 
+      {/* Cinta cinética: se acelera con el scroll */}
+      <KineticBand tone="ink" words={['Mirada de yaguá', 'Running', 'Hockey', 'Pádel', 'Trekking', 'King Fishing', 'Niños']} />
+
       {/* 2. Accesos por deporte */}
       <section className="py-16 lg:py-24">
         <Container>
@@ -56,6 +60,7 @@ export default async function HomePage() {
                     className={`object-cover transition duration-700 ease-out group-hover:scale-105 ${CARD_FOCUS[s.slug] ?? ''}`}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
+                  <div className="absolute inset-0 bg-brand-turquoise opacity-0 mix-blend-multiply transition duration-500 group-hover:opacity-60" />
                   <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4 lg:p-6">
                     <div>
                       <p className="hidden text-sm text-white/80 sm:block">{s.tagline}</p>
@@ -173,6 +178,8 @@ export default async function HomePage() {
           </div>
         </Container>
       </section>
+
+      <KineticBand tone="pink" tilt={2} speed={2} words={['Hecho en el litoral', 'Concepción del Uruguay', 'Garra de nuestra tierra']} />
 
       {/* 7. Identidad local: somos de Concepción del Uruguay */}
       <Litoral />

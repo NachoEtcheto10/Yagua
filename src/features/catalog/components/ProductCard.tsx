@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Price } from '@/components/ui/Price'
 import { cn, discountPct } from '@/lib/format'
 import type { ProductCardData } from '../queries'
+import { Tilt } from '@/components/ui/Kinetic'
 import { FavoriteButton } from './FavoriteButton'
 
 const TAG_LABEL: Record<string, string> = { NUEVO: 'Nuevo', ULTIMAS_UNIDADES: 'Últimas unidades' }
@@ -15,7 +16,7 @@ export function ProductCard({ product, priority, className }: { product: Product
     <Link href={product.href} className={cn('group flex flex-col', className)}>
       {/* Foto: llena toda la tarjeta (4:5, la forma de las fotos de producto) sin bordes de color.
           Zoom + cambio a la segunda imagen al pasar el mouse */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-white">
+      <Tilt className="relative aspect-[4/5] overflow-hidden bg-white shadow-none transition-shadow duration-500 group-hover:shadow-[0_18px_40px_-18px_rgba(18,181,170,0.55)]">
         {main && (
           <Image
             src={main.url}
@@ -55,7 +56,7 @@ export function ProductCard({ product, priority, className }: { product: Product
           </span>
         )}
         <FavoriteButton slug={product.slug} className="absolute right-2 top-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100" />
-      </div>
+      </Tilt>
       <div className="flex flex-1 flex-col gap-1 pt-3">
         <Price price={product.price} salePrice={product.salePrice} size="sm" />
         <h3 className="line-clamp-2 text-sm leading-snug text-brand-ink group-hover:underline">{product.name}</h3>

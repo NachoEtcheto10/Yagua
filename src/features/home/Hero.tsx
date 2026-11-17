@@ -47,19 +47,26 @@ export function Hero() {
         <div className="relative">
           <motion.div {...appear(0.05, 12)}>
             {/* Ojos con su contorno negro original (no la versión blanca) */}
-            <Image src="/brand/yagua-eyes.svg" alt="" width={140} height={40} className="h-10 w-auto lg:h-12" priority />
+            <Image src="/brand/yagua-eyes.svg" alt="" width={140} height={40} className="h-10 w-auto origin-center animate-blink lg:h-12" priority />
           </motion.div>
           <motion.p {...appear(0.12)} className="mt-6 flex items-center gap-2 font-display text-sm font-extrabold uppercase tracking-[0.2em] text-brand-ink">
             <MapPin size={16} /> Desde Concepción del Uruguay
           </motion.p>
-          <motion.h1
-            {...appear(0.2, 36)}
-            className="mt-3 font-display text-[3.1rem] font-black uppercase leading-[0.9] text-brand-ink sm:text-7xl lg:text-6xl xl:text-[5.4rem]"
-          >
-            Mirada
-            <br />
-            de <span className="text-white">yaguá</span>
-          </motion.h1>
+          {/* El título entra palabra por palabra, como una persiana */}
+          <h1 className="mt-3 font-display text-[3.1rem] font-black uppercase leading-[0.95] text-brand-ink sm:text-7xl lg:text-6xl xl:text-[5.4rem]">
+            {[['Mirada', ''], ['de', ''], ['yaguá', 'text-white']].map(([w, c], i) => (
+              <span key={w} className="mr-[0.2em] inline-block overflow-hidden pb-[0.06em] align-bottom">
+                <motion.span
+                  className={`inline-block ${c}`}
+                  initial={reduce ? false : { y: '110%' }}
+                  animate={{ y: 0 }}
+                  transition={{ delay: 0.15 + i * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {w}
+                </motion.span>
+              </span>
+            ))}
+          </h1>
           <motion.p {...appear(0.35)} className="mt-6 max-w-md text-lg font-medium text-brand-ink/80">
             Ropa y equipamiento para entrenar, jugar y salir al río. Hecho para la gente del litoral, con la garra de nuestra tierra.
           </motion.p>
