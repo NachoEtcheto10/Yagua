@@ -68,7 +68,7 @@ export function AdminNav({ userName }: { userName: string }) {
           <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
           <aside className="absolute inset-y-0 left-0 flex w-64 flex-col bg-brand-primary">
             <div className="flex h-14 items-center justify-between px-4">
-              <Image src="/brand/yagua-logo-white.svg" alt="Yaguá" width={80} height={35} className="h-8 w-auto" />
+              <span className="rounded-lg bg-white px-2 py-1"><Image src="/brand/yagua-logo.svg" alt="Yaguá" width={70} height={30} className="h-7 w-auto" /></span>
               <button type="button" onClick={() => setOpen(false)} aria-label="Cerrar menú" className="grid h-10 w-10 place-items-center text-white">
                 <X size={22} />
               </button>
@@ -80,7 +80,7 @@ export function AdminNav({ userName }: { userName: string }) {
       {/* Barra lateral (escritorio) */}
       <aside className="sticky top-0 hidden h-svh flex-col bg-brand-primary lg:flex">
         <div className="px-6 pb-2 pt-6">
-          <Image src="/brand/yagua-logo-white.svg" alt="Yaguá" width={92} height={40} className="h-10 w-auto" />
+          <span className="inline-block rounded-xl bg-white px-3 py-2"><Image src="/brand/yagua-logo.svg" alt="Yaguá" width={92} height={40} className="h-9 w-auto" /></span>
           <p className="mt-2 text-xs font-semibold uppercase tracking-widest text-white/40">Panel de gestión</p>
         </div>
         {content}

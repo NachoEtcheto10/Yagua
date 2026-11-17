@@ -26,7 +26,10 @@ export function Footer({ sports }: { sports: NavSport[] }) {
         <Rosettes className="opacity-[0.04]" />
         <div className="relative mx-auto grid max-w-[1440px] gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1.4fr] lg:px-10">
           <div>
-            <Image src="/brand/yagua-logo-white.svg" alt="Yaguá" width={140} height={60} className="h-14 w-auto" />
+            {/* Logo con los ojos en su versión original (contorno negro), sobre una placa blanca */}
+            <span className="inline-block rounded-2xl bg-white px-4 py-3">
+              <Image src="/brand/yagua-logo.svg" alt="Yaguá" width={130} height={56} className="h-12 w-auto" />
+            </span>
             <p className="mt-5 max-w-xs text-sm text-white/70">{SITE.description}</p>
             <div className="mt-6 flex gap-3">
               <a href={SITE.instagram} target="_blank" rel="noopener" aria-label="Instagram" className="grid h-10 w-10 place-items-center border border-white/30 hover:bg-white hover:text-brand-ink"><InstagramIcon /></a>

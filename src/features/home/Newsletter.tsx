@@ -7,7 +7,7 @@ export function Newsletter() {
   const [state, action, pending] = useActionState(subscribeNewsletter, undefined)
   return (
     <section className="bg-brand-secondary">
-      <div className="mx-auto grid max-w-[1440px] gap-6 px-4 py-12 sm:px-6 md:grid-cols-2 md:items-center lg:px-10 lg:py-16">
+      <div className="mx-auto grid max-w-[1440px] gap-6 px-4 py-12 sm:px-6 md:grid-cols-2 md:items-center lg:px-10 lg:py-16 [&>*]:min-w-0">
         <div>
           <h2 className="font-display text-4xl font-extrabold uppercase italic leading-none sm:text-5xl">Sumate a la manada</h2>
           <p className="mt-3 max-w-md text-brand-ink/80">Lanzamientos, ofertas exclusivas y 10% OFF en tu primera compra.</p>

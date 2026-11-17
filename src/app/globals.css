@@ -6,6 +6,8 @@
   --color-brand-primary: #1b181c;   /* negro del logo */
   --color-brand-secondary: #bcd637; /* verde lima (ojo izquierdo) */
   --color-brand-accent: #ee3164;    /* rosa fucsia (ojo derecho) */
+  --color-brand-turquoise: #12b5aa; /* turquesa (como la gorra y los buzos turquesa de la marca) */
+  --color-brand-turquoise-deep: #0b8f86;
   --color-brand-ink: #1b181c;
   --color-brand-paper: #ffffff;
   --color-brand-mist: #f3f3f1;      /* fondos suaves */
@@ -17,7 +19,7 @@
   --color-kf-water: #12506b;
   --color-kf-gold: #e7b74a;
 
-  --font-display: var(--font-barlow), "Arial Narrow", sans-serif;
+  --font-display: var(--font-display-face), "Arial Rounded MT Bold", system-ui, sans-serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
 
   --animate-marquee: marquee 40s linear infinite;
@@ -57,3 +59,8 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* La tipografía de títulos (Nunito) va derecha, como en las prendas: anula la cursiva heredada del diseño anterior */
+.font-display.italic,
+.font-display .italic { font-style: normal; }
+.font-display { letter-spacing: -0.015em; }

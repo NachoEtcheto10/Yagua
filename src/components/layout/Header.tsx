@@ -88,7 +88,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
                   href={`/${s.slug}`}
                   onFocus={() => setHover(s.slug)}
                   className={cn(
-                    'relative flex h-[72px] items-center whitespace-nowrap px-2 font-display text-[15px] font-bold uppercase tracking-wide 2xl:px-3',
+                    'relative flex h-[72px] items-center whitespace-nowrap px-[7px] font-display text-[13.5px] font-extrabold uppercase tracking-normal 2xl:px-3 2xl:text-[15px] 2xl:tracking-wide',
                     "after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:origin-left after:scale-x-0 after:bg-brand-accent after:transition after:content-['']",
                     (hover === s.slug || pathname.startsWith(`/${s.slug}`)) && 'after:scale-x-100',
                     s.isSubBrand && 'text-kf-water',
@@ -103,7 +103,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
                 <Link
                   href={l.href}
                   className={cn(
-                    'flex h-[72px] items-center whitespace-nowrap px-2 font-display text-[15px] font-bold uppercase tracking-wide 2xl:px-3',
+                    'flex h-[72px] items-center whitespace-nowrap px-[7px] font-display text-[13.5px] font-extrabold uppercase tracking-normal 2xl:px-3 2xl:text-[15px] 2xl:tracking-wide',
                     l.href === '/ofertas' && 'text-brand-accent',
                   )}
                 >

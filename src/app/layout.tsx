@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next'
-import { Barlow_Condensed, Inter } from 'next/font/google'
+import { Inter, Nunito } from 'next/font/google'
 import { INDEXABLE, SITE } from '@/lib/site'
 import './globals.css'
 
-const barlow = Barlow_Condensed({ subsets: ['latin'], weight: ['600', '700', '800', '900'], style: ['normal', 'italic'], variable: '--font-barlow', display: 'swap' })
+// Títulos: Nunito, redondeada y gruesa como la tipografía de las prendas (KIIING ADVENTURE)
+const display = Nunito({ subsets: ['latin'], weight: ['700', '800', '900'], variable: '--font-display-face', display: 'swap' })
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
 
 export const metadata: Metadata = {
@@ -19,7 +20,7 @@ export const viewport: Viewport = { themeColor: '#1b181c' }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es-AR" className={`${barlow.variable} ${inter.variable}`}>
+    <html lang="es-AR" className={`${display.variable} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   )
