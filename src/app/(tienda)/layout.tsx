@@ -5,6 +5,8 @@ import type { NavSport } from '@/components/layout/nav-types'
 import { CartDrawer } from '@/features/cart/CartDrawer'
 import { getSports } from '@/features/catalog/queries'
 import { auth } from '@/lib/auth'
+import { SmoothScroll } from '@/components/ui/SmoothScroll'
+import 'lenis/dist/lenis.css'
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
   const [sports, session] = await Promise.all([getSports(), auth()])
@@ -21,6 +23,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
       <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-[100] focus:bg-white focus:px-4 focus:py-2">
         Saltar al contenido
       </a>
+      <SmoothScroll />
       <AnnouncementBar />
       <Header sports={nav} userName={session?.user?.name ?? session?.user?.email ?? null} />
       <main id="contenido" className="min-h-[60vh]">{children}</main>

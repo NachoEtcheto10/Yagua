@@ -13,6 +13,7 @@ import { Litoral } from '@/features/home/Litoral'
 import { ProductTabs } from '@/features/home/ProductTabs'
 import { CampaignCarousel } from '@/features/home/CampaignCarousel'
 import { Collaborations } from '@/features/home/Collaborations'
+import { ExpandingMedia, HomeFeatures, Manifesto } from '@/features/home/Scrolly'
 import { getActiveCampaigns, getCommunity } from '@/features/home/queries'
 
 export const revalidate = 300
@@ -41,8 +42,25 @@ export default async function HomePage() {
       {/* Cinta cinética: se acelera con el scroll */}
       <KineticBand tone="ink" words={['Mirada de yaguá', 'Running', 'Hockey', 'Pádel', 'Trekking', 'King Fishing', 'Niños']} />
 
+      {/* Manifiesto: se enciende palabra por palabra con el scroll */}
+      <Manifesto
+        label="Mirada de yaguá"
+        highlight={['yaguareté:', 'litoral']}
+        text="Entrenar, jugar, salir al río. Cada movimiento pide ropa que acompañe. Diseñamos prendas técnicas con la mirada del yaguareté: atentas, firmes y hechas para la gente del litoral que no se queda quieta."
+      />
+
+      {/* Foto que se agranda hasta ocupar la pantalla */}
+      <ExpandingMedia
+        src="/sports/tenis.webp"
+        alt="Cancha de polvo de ladrillo vista desde arriba, con un jugador sacando"
+        eyebrow="Para cada deporte"
+        title="¿Cuál es el tuyo?"
+        text="Running, hockey, pádel, tenis, trekking, golf y más. Ropa y equipamiento para cada cancha y cada camino."
+        cta={{ href: '#deportes', label: 'Elegí tu deporte' }}
+      />
+
       {/* 2. Accesos por deporte */}
-      <section className="py-16 lg:py-24">
+      <section id="deportes" className="scroll-mt-20 py-16 lg:py-24">
         <Container>
           <SectionTitle>Elegí tu deporte</SectionTitle>
           <div className="mt-8 grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
@@ -118,6 +136,9 @@ export default async function HomePage() {
 
       {/* 4b. Colaboraciones: FAP × Yaguá */}
       <Collaborations />
+
+      {/* Por qué Yaguá: foto fija que cambia con cada característica */}
+      <HomeFeatures />
 
       {/* 5. King Fishing */}
       <section className="relative overflow-hidden bg-kf-deep text-white">
