@@ -22,13 +22,6 @@ const CARD_FOCUS: Record<string, string> = {
   ninos: 'object-top', // que se vea la cara de la nena entera
 }
 
-// Comprá por género: las fotos son los banners de la marca (los modelos quedan al centro)
-const SHOP_BY = [
-  { label: 'Hombre', href: '/buscar?genero=hombre', image: '/campaigns/hombres.webp', alt: 'Dos modelos con remeras deportivas Yaguá', pos: 'object-[50%_30%]' },
-  { label: 'Mujer', href: '/buscar?genero=mujer', image: '/campaigns/damas.webp', alt: 'Dos modelos con tops y calzas Yaguá', pos: 'object-[50%_30%]' },
-  { label: 'Niños', href: '/ninos', image: '/campaigns/ninos.webp', alt: 'Una nena y un nene con remeras Yaguá', pos: 'object-[54%_30%]' },
-]
-
 export default async function HomePage() {
   const [sports, newArrivals, bestSellers, kingFishing, campaigns, community] = await Promise.all([
     getSports(),
@@ -44,38 +37,6 @@ export default async function HomePage() {
     <>
       {/* 1. Hero */}
       <Hero />
-
-      {/* Comprá por: Hombre / Mujer / Niños (fotos de la marca) */}
-      <section className="pt-10 lg:pt-14">
-        <Container>
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
-            {SHOP_BY.map((c, i) => (
-              <Reveal key={c.label} delay={i * 0.08}>
-                <Link href={c.href} className="group relative block aspect-[3/5] overflow-hidden bg-brand-mist sm:aspect-[4/5]">
-                  <Image src={c.image} alt={c.alt} fill sizes="(min-width: 1024px) 33vw, 34vw" className={`object-cover transition duration-700 ease-out group-hover:scale-105 ${c.pos}`} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 lg:p-6">
-                    <p className="font-display text-xl font-black uppercase leading-none text-white sm:text-3xl lg:text-5xl">{c.label}</p>
-                    <span className="hidden h-10 w-10 shrink-0 place-items-center bg-white text-brand-ink transition group-hover:bg-brand-secondary sm:grid">
-                      <ArrowRight size={20} />
-                    </span>
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* Foto que se agranda hasta ocupar la pantalla */}
-      <ExpandingMedia
-        src="/sports/tenis.webp"
-        alt="Cancha de polvo de ladrillo vista desde arriba, con un jugador sacando"
-        eyebrow="Para cada deporte"
-        title="¿Cuál es el tuyo?"
-        text="Running, hockey, pádel, tenis, trekking, golf y más. Ropa y equipamiento para cada cancha y cada camino."
-        cta={{ href: '#deportes', label: 'Elegí tu deporte' }}
-      />
 
       {/* 2. Accesos por deporte */}
       <section id="deportes" className="scroll-mt-20 py-16 lg:py-24">
@@ -112,6 +73,16 @@ export default async function HomePage() {
           </div>
         </Container>
       </section>
+
+      {/* Foto que se agranda hasta ocupar la pantalla */}
+      <ExpandingMedia
+        src="/sports/tenis.webp"
+        alt="Cancha de polvo de ladrillo vista desde arriba, con un jugador sacando"
+        eyebrow="Hecho para moverte"
+        title="Jugá con garra"
+        text="Ropa técnica para entrenar, competir y disfrutar cada cancha y cada camino."
+        cta={{ href: '/buscar?orden=novedades', label: 'Ver novedades' }}
+      />
 
       {/* 3. Novedades / Lo más vendido */}
       <section className="pb-16 lg:pb-24">
