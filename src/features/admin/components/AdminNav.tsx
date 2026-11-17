@@ -1,5 +1,5 @@
 'use client'
-import { BadgePercent, ExternalLink, LayoutDashboard, LogOut, Megaphone, Menu, Package, Shirt, ShoppingCart, Users, X } from 'lucide-react'
+import { BadgePercent, Building2, ExternalLink, LayoutDashboard, LogOut, Megaphone, Menu, Package, Shirt, ShoppingCart, Users, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -14,6 +14,7 @@ const LINKS = [
   { href: '/admin/personalizados', label: 'Personalizados', icon: Shirt },
   { href: '/admin/cupones', label: 'Cupones', icon: BadgePercent },
   { href: '/admin/campanas', label: 'Campañas', icon: Megaphone },
+  { href: '/admin/mayoristas', label: 'Mayoristas', icon: Building2 },
   { href: '/admin/clientes', label: 'Clientes', icon: Users },
 ]
 

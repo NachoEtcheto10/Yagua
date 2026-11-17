@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { db } from '@/lib/db'
 import { signIn, signOut } from '@/lib/auth'
 
-export type AuthState = { error?: string; fieldErrors?: Record<string, string> } | undefined
+export type AuthState = { error?: string; fieldErrors?: Record<string, string>; values?: { name?: string; email?: string } } | undefined
 
 const registerSchema = z.object({
   name: z.string().trim().min(2, 'Ingresá tu nombre'),
@@ -33,12 +33,14 @@ export async function loginAction(_: AuthState, form: FormData): Promise<AuthSta
 
 export async function registerAction(_: AuthState, form: FormData): Promise<AuthState> {
   const parsed = registerSchema.safeParse(Object.fromEntries(form))
+  // Se devuelve lo escrito (menos la contraseña) para que el formulario no quede vacío si hay un error
+  const values = { name: String(form.get('name') ?? ''), email: String(form.get('email') ?? '') }
   if (!parsed.success) {
-    return { fieldErrors: Object.fromEntries(parsed.error.issues.map((i) => [String(i.path[0]), i.message])) }
+    return { fieldErrors: Object.fromEntries(parsed.error.issues.map((i) => [String(i.path[0]), i.message])), values }
   }
   const { name, email, password } = parsed.data
   const exists = await db.user.findUnique({ where: { email } })
-  if (exists) return { fieldErrors: { email: 'Ya hay una cuenta con ese e-mail. Ingresá o recuperá tu contraseña.' } }
+  if (exists) return { fieldErrors: { email: 'Ya hay una cuenta con ese e-mail. Ingresá o recuperá tu contraseña.' }, values }
   await db.user.create({ data: { name, email, passwordHash: await bcrypt.hash(password, 10) } })
   try {
     await signIn('credentials', { email, password, redirectTo: safeRedirect(form.get('redirectTo')) })

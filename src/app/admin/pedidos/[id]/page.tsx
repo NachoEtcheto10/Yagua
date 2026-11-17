@@ -27,7 +27,7 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
   return (
     <>
       <Link href="/admin/pedidos" className="mb-3 inline-flex items-center gap-1 text-sm text-brand-muted hover:text-brand-ink"><ArrowLeft size={16} /> Pedidos</Link>
-      <PageHeader title={`Pedido #${order.number}`} subtitle={dateTime(order.createdAt)} actions={<StatusBadge status={order.status} />} />
+      <PageHeader title={`Pedido ${order.channel === 'WHOLESALE' ? 'mayorista ' : ''}#${order.number}`} subtitle={dateTime(order.createdAt)} actions={<StatusBadge status={order.status} />} />
 
       <div className="grid gap-4 xl:grid-cols-[1.6fr_1fr]">
         <div className="space-y-4">

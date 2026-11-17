@@ -19,7 +19,7 @@ function GoogleButton({ redirectTo }: { redirectTo: string }) {
   )
 }
 
-export function LoginForm({ redirectTo, google }: { redirectTo: string; google: boolean }) {
+export function LoginForm({ redirectTo, google, registerHref, registerLabel = 'Registrate' }: { redirectTo: string; google: boolean; registerHref?: string; registerLabel?: string }) {
   const [state, action, pending] = useActionState(loginAction, undefined)
   return (
     <div className="space-y-6">
@@ -33,7 +33,7 @@ export function LoginForm({ redirectTo, google }: { redirectTo: string; google: 
         {/* TODO Fase 3: recuperar contraseña por e-mail */}
         <p className="text-center text-sm text-brand-muted">¿Olvidaste tu contraseña? Escribinos y te ayudamos.</p>
       </form>
-      <p className="text-center text-sm">¿No tenés cuenta? <Link href={`/registro?volver=${encodeURIComponent(redirectTo)}`} className="font-semibold underline">Registrate</Link></p>
+      <p className="text-center text-sm">¿No tenés cuenta? <Link href={registerHref ?? `/registro?volver=${encodeURIComponent(redirectTo)}`} className="font-semibold underline">{registerLabel}</Link></p>
     </div>
   )
 }
@@ -44,10 +44,10 @@ export function RegisterForm({ redirectTo, google }: { redirectTo: string; googl
   return (
     <div className="space-y-6">
       {google && <><GoogleButton redirectTo={redirectTo} /><p className="text-center text-xs uppercase tracking-widest text-brand-muted">o con tu e-mail</p></>}
-      <form action={action} className="space-y-4">
+      <form key={JSON.stringify(state?.values ?? {})} action={action} className="space-y-4">
         <input type="hidden" name="redirectTo" value={redirectTo} />
-        <label className="block text-sm font-semibold">Nombre y apellido<input name="name" autoComplete="name" required className={input} />{err.name && <span className="text-xs text-brand-accent">{err.name}</span>}</label>
-        <label className="block text-sm font-semibold">E-mail<input name="email" type="email" autoComplete="email" required className={input} />{err.email && <span className="text-xs text-brand-accent">{err.email}</span>}</label>
+        <label className="block text-sm font-semibold">Nombre y apellido<input name="name" defaultValue={state?.values?.name} autoComplete="name" required className={input} />{err.name && <span className="text-xs text-brand-accent">{err.name}</span>}</label>
+        <label className="block text-sm font-semibold">E-mail<input name="email" type="email" defaultValue={state?.values?.email} autoComplete="email" required className={input} />{err.email && <span className="text-xs text-brand-accent">{err.email}</span>}</label>
         <label className="block text-sm font-semibold">Contraseña<input name="password" type="password" autoComplete="new-password" minLength={8} required className={input} />{err.password && <span className="text-xs text-brand-accent">{err.password}</span>}</label>
         {state?.error && <p role="alert" className="text-sm font-semibold text-brand-accent">{state.error}</p>}
         <button type="submit" disabled={pending} className={cn(buttonClass.primary, 'w-full disabled:opacity-60')}>{pending ? 'Creando cuenta…' : 'Crear cuenta'}</button>

@@ -18,7 +18,7 @@ export async function getDashboard() {
   const monthStart = new Date(`${today.slice(0, 7)}-01T03:00:00.000Z`)
   const chartStart = new Date(new Date(`${today}T03:00:00.000Z`).getTime() - 13 * 86_400_000)
 
-  const [month, toPrepare, pendingPayment, recent, lowStock, chartOrders, customNew, topItems] = await Promise.all([
+  const [month, toPrepare, pendingPayment, recent, lowStock, chartOrders, customNew, topItems, wholesalePending] = await Promise.all([
     db.order.aggregate({ where: { status: { in: SOLD }, createdAt: { gte: monthStart } }, _sum: { total: true }, _count: true }),
     db.order.count({ where: { status: { in: ['PAID', 'PREPARING'] } } }),
     db.order.count({ where: { status: 'PENDING' } }),
@@ -36,6 +36,7 @@ export async function getDashboard() {
       orderBy: { _sum: { quantity: 'desc' } },
       take: 5,
     }),
+    db.wholesaleAccount.count({ where: { status: 'PENDING' } }),
   ])
 
   const days = Array.from({ length: 14 }, (_, i) => arDay(new Date(chartStart.getTime() + i * 86_400_000 + 12 * 3_600_000)))
@@ -63,6 +64,7 @@ export async function getDashboard() {
     toPrepare,
     pendingPayment,
     customNew,
+    wholesalePending,
     recent,
     lowStock: lowByProduct,
     topItems: topItems.map((t) => ({ productId: t.productId, name: t.productName, units: t._sum.quantity ?? 0 })),

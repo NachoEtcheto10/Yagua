@@ -64,7 +64,7 @@ export default async function AdminHome() {
         <Stat label="Ventas del mes" value={formatPrice(d.revenue)} hint={`${d.orders} pedidos`} />
         <Stat label="Ticket promedio" value={formatPrice(d.avgTicket)} />
         <Stat label="Para preparar" value={String(d.toPrepare)} hint="Pagados o en preparación" href="/admin/pedidos?estado=PAID" />
-        <Stat label="Esperando pago" value={String(d.pendingPayment)} hint={d.customNew ? `${d.customNew} presupuestos nuevos` : 'Transferencias y efectivo'} href="/admin/pedidos?estado=PENDING" />
+        <Stat label="Esperando pago" value={String(d.pendingPayment)} hint={d.wholesalePending ? `${d.wholesalePending} empresas para revisar` : d.customNew ? `${d.customNew} presupuestos nuevos` : 'Transferencias y efectivo'} href="/admin/pedidos?estado=PENDING" />
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[1.6fr_1fr]">

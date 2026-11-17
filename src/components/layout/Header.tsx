@@ -1,6 +1,6 @@
 'use client'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronRight, Heart, Menu, Search, ShoppingBag, User, X } from 'lucide-react'
+import { Building2, ChevronRight, Heart, Menu, Search, ShoppingBag, User, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -244,6 +244,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
                 <div className="space-y-1 p-5 text-sm">
                   <Link href={userName ? '/cuenta' : '/ingresar'} className="flex items-center gap-3 py-2"><User size={18} /> {userName ? 'Mi cuenta' : 'Ingresar / Registrarme'}</Link>
                   <Link href="/favoritos" className="flex items-center gap-3 py-2"><Heart size={18} /> Favoritos</Link>
+                  <Link href="/mayoristas" className="flex items-center gap-3 py-2 font-semibold"><Building2 size={18} /> Ventas mayoristas</Link>
                 </div>
               </nav>
             </motion.aside>

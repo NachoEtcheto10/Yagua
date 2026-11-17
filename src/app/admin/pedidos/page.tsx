@@ -71,6 +71,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: SP })
                   <tr key={o.id} className="hover:bg-brand-mist/60">
                     <td className={td}>
                       <Link href={`/admin/pedidos/${o.id}`} className="font-semibold hover:underline">#{o.number}</Link>
+                      {o.channel === 'WHOLESALE' && <span className="ml-2 rounded bg-brand-turquoise/20 px-1.5 py-0.5 text-[11px] font-bold uppercase text-brand-turquoise-deep">Mayorista</span>}
                       <p className="text-xs text-brand-muted">{dateTime(o.createdAt)}</p>
                     </td>
                     <td className={td}>{o.customerName}<p className="text-xs text-brand-muted">{o.email}</p></td>

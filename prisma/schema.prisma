@@ -35,6 +35,7 @@ model User {
   addresses Address[]
   orders    Order[]
   favorites Favorite[]
+  wholesale WholesaleAccount?
 }
 
 model Account {
@@ -252,9 +253,15 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum OrderChannel {
+  RETAIL     // tienda online
+  WHOLESALE  // venta mayorista a empresas aprobadas
+}
+
 model Order {
   id             String         @id @default(cuid())
   number         Int            @unique @default(autoincrement())
+  channel        OrderChannel   @default(RETAIL)
   userId         String?
   email          String
   customerName   String
@@ -431,4 +438,42 @@ model NewsletterSubscriber {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())
+}
+
+// ───────────────────────────── Ventas mayoristas
+
+enum WholesaleStatus {
+  PENDING   // la empresa pidió la cuenta, falta revisarla
+  APPROVED  // ve precios mayoristas y puede comprar
+  REJECTED
+}
+
+/// Datos de la empresa que pide comprar por mayor. El dueño la aprueba o rechaza desde el panel.
+model WholesaleAccount {
+  id           String          @id @default(cuid())
+  userId       String          @unique
+  companyName  String
+  cuit         String
+  businessType String          // tienda deportiva, club, colegio, empresa (uniformes)...
+  monthlyVolume String         // rango estimado de compra mensual
+  website      String?
+  instagram    String?
+  phone        String
+  city         String
+  message      String?
+  status       WholesaleStatus @default(PENDING)
+  adminNote    String?
+  createdAt    DateTime        @default(now())
+  reviewedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+}
+
+/// Configuración editable desde el panel (por ejemplo, el % mayorista y la compra mínima)
+model StoreSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
 }

@@ -1,5 +1,6 @@
 'use client'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { ANNOUNCEMENTS } from '@/lib/site'
 
@@ -24,6 +25,10 @@ export function AnnouncementBar() {
           {ANNOUNCEMENTS[i]}
         </motion.p>
       </AnimatePresence>
+      {/* Acceso a ventas mayoristas (en compu, a la derecha de la barra) */}
+      <Link href="/mayoristas" className="absolute inset-y-0 right-4 hidden items-center font-display text-xs font-extrabold uppercase tracking-wider underline-offset-4 hover:underline md:flex lg:right-10">
+        Mayoristas
+      </Link>
     </div>
   )
 }

@@ -46,6 +46,7 @@ export function Footer({ sports }: { sports: NavSport[] }) {
               ))}
               <li><Link href="/personalizados" className="hover:text-white">Personalizados</Link></li>
               <li><Link href="/comunidad" className="hover:text-white">Comunidad</Link></li>
+              <li><Link href="/mayoristas" className="hover:text-white">Ventas mayoristas</Link></li>
             </ul>
           </nav>
 
