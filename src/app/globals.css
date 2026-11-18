@@ -70,3 +70,9 @@
 .font-display.italic,
 .font-display .italic { font-style: normal; }
 .font-display { letter-spacing: -0.015em; }
+
+/* Barra de progreso de las pestañas del hero (se pausa con animation-play-state) */
+@keyframes hero-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}

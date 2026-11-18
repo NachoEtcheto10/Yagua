@@ -66,42 +66,52 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
     document.body.style.overflow = mobile ? 'hidden' : ''
   }, [mobile])
 
-  // En la home la portada ocupa toda la pantalla: la barra arranca escondida y baja al deslizar
+  // En la home la barra va fija sobre la portada: transparente con todo en blanco,
+  // y pasa a fondo oscuro al bajar más de 50px (o al abrir el menú o el buscador)
   const overlay = pathname === '/'
-  const [shown, setShown] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
     if (!overlay) return
-    const onScroll = () => {
-      const show = window.scrollY > window.innerHeight * 0.45
-      setShown(show)
-      if (!show) setHover(null)
-    }
+    const onScroll = () => setScrolled(window.scrollY > 50)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [overlay])
-  const hidden = overlay && !shown && !mobile
+  const solid = scrolled || !!hover || searchOpen || mobile
 
   const hovered = sports.find((s) => s.slug === hover)
 
   return (
     <header
       className={cn(
-        'top-0 z-40 border-b border-brand-line bg-white',
-        overlay ? 'fixed inset-x-0 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.25)] transition-[translate,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]' : 'sticky',
-        hidden && '-translate-y-full opacity-0',
+        'top-0 z-40 border-b',
+        overlay
+          ? cn(
+              'fixed inset-x-0 text-white transition-[background-color,box-shadow,border-color] duration-300 ease-out',
+              solid ? 'border-white/10 bg-[#111] shadow-[0_6px_24px_rgba(0,0,0,0.3)]' : 'border-transparent bg-transparent',
+            )
+          : 'sticky border-brand-line bg-white',
       )}
       onMouseLeave={() => setHover(null)}
-      onFocusCapture={() => overlay && setShown(true)}
     >
       <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-4 px-4 sm:px-6 lg:h-[72px] lg:px-10">
-        <button type="button" onClick={() => setMobile(true)} className="-ml-2 grid h-10 w-10 place-items-center xl:hidden" aria-label="Abrir menú">
-          <Menu size={24} />
-        </button>
+        {!overlay && (
+          <button type="button" onClick={() => setMobile(true)} className="-ml-2 grid h-10 w-10 place-items-center xl:hidden" aria-label="Abrir menú">
+            <Menu size={24} />
+          </button>
+        )}
 
-        <Link href="/" className="mx-auto shrink-0 xl:mx-0" aria-label="Yaguá, ir al inicio">
-          <Image src="/brand/yagua-logo.svg" alt="Yaguá" width={104} height={45} priority className="h-10 w-auto lg:h-11" />
-        </Link>
+        {overlay ? (
+          // Sobre la portada: los ojos + YAGUÁ en blanco, a la izquierda
+          <Link href="/" className="mr-auto flex shrink-0 items-center gap-3 xl:mr-0" aria-label="Yaguá, ir al inicio">
+            <Image src="/brand/yagua-eyes.svg" alt="" width={98} height={28} priority className="h-8 w-auto lg:h-9" />
+            <span className="font-display text-lg font-extrabold tracking-[0.3em] lg:text-xl">YAGUÁ</span>
+          </Link>
+        ) : (
+          <Link href="/" className="mx-auto shrink-0 xl:mx-0" aria-label="Yaguá, ir al inicio">
+            <Image src="/brand/yagua-logo.svg" alt="Yaguá" width={104} height={45} priority className="h-10 w-auto lg:h-11" />
+          </Link>
+        )}
 
         {/* Navegación por deporte (escritorio) */}
         <nav className="hidden flex-1 justify-center xl:flex" aria-label="Deportes">
@@ -115,7 +125,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
                     'relative flex h-[72px] items-center whitespace-nowrap px-[7px] font-display text-[13.5px] font-extrabold uppercase tracking-normal 2xl:px-3 2xl:text-[15px] 2xl:tracking-wide',
                     "after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:origin-left after:scale-x-0 after:bg-brand-accent after:transition after:content-['']",
                     (hover === s.slug || pathname.startsWith(`/${s.slug}`)) && 'after:scale-x-100',
-                    s.isSubBrand && 'text-kf-water',
+                    s.isSubBrand && !overlay && 'text-kf-water',
                   )}
                 >
                   {s.name}
@@ -139,26 +149,46 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
         </nav>
 
         <div className="flex items-center gap-1 lg:gap-2">
-          <div className="hidden w-52 2xl:block">
-            <SearchBox />
-          </div>
-          <button type="button" onClick={() => setSearchOpen((v) => !v)} className="grid h-10 w-10 place-items-center 2xl:hidden" aria-label="Buscar">
+          {!overlay && (
+            <div className="hidden w-52 2xl:block">
+              <SearchBox />
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => setSearchOpen((v) => !v)}
+            className={cn('h-10 w-10 place-items-center', overlay ? 'hidden sm:grid' : 'grid 2xl:hidden')}
+            aria-label="Buscar"
+            aria-expanded={searchOpen}
+          >
             <Search size={22} />
           </button>
           <Link href={userName ? '/cuenta' : '/ingresar'} className="hidden h-10 w-10 place-items-center sm:grid" aria-label={userName ? `Mi cuenta (${userName})` : 'Ingresar'}>
             <User size={22} />
           </Link>
-          <Link href="/favoritos" className="hidden h-10 w-10 place-items-center sm:grid" aria-label="Favoritos">
-            <Heart size={22} />
-          </Link>
+          {!overlay && (
+            <Link href="/favoritos" className="hidden h-10 w-10 place-items-center sm:grid" aria-label="Favoritos">
+              <Heart size={22} />
+            </Link>
+          )}
           <CartButton />
+          {overlay && (
+            <button type="button" onClick={() => setMobile(true)} className="-mr-2 grid h-10 w-10 place-items-center xl:hidden" aria-label="Abrir menú">
+              <Menu size={24} />
+            </button>
+          )}
         </div>
       </div>
 
       {/* Buscador desplegable (celular y tablet) */}
       <AnimatePresence>
         {searchOpen && (
-          <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden border-t border-brand-line 2xl:hidden">
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: 'auto' }}
+            exit={{ height: 0 }}
+            className={cn('overflow-hidden border-t text-brand-ink', overlay ? 'border-white/10' : 'border-brand-line 2xl:hidden')}
+          >
             <div className="px-4 py-3 sm:px-6">
               <SearchBox autoFocus onNavigate={() => setSearchOpen(false)} />
             </div>
@@ -175,7 +205,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18 }}
-            className="absolute inset-x-0 top-full hidden border-b border-brand-line bg-white shadow-xl xl:block"
+            className="absolute inset-x-0 top-full hidden border-b border-brand-line bg-white text-brand-ink shadow-xl xl:block"
             onMouseEnter={() => setHover(hovered.slug)}
           >
             <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_1fr_auto] gap-10 px-10 py-10">
@@ -220,7 +250,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
       {/* Menú lateral (celular) */}
       <AnimatePresence>
         {mobile && (
-          <div className="fixed inset-0 z-50 xl:hidden">
+          <div className="fixed inset-0 z-50 text-brand-ink xl:hidden">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobile(false)} className="absolute inset-0 bg-black/50" />
             <motion.aside
               initial={{ x: '-100%' }}

@@ -1,44 +1,74 @@
 'use client'
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import { ArrowDown, ArrowRight } from 'lucide-react'
-import Image from 'next/image'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
+import { getImageProps } from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
-import { buttonClass } from '@/components/ui/Container'
+import { useEffect, useState } from 'react'
 import { getLenis } from '@/components/ui/SmoothScroll'
+import { cn } from '@/lib/format'
 
 /**
- * Portada a pantalla completa, oscura, con el título grande en blanco y una frase chica abajo.
- * Mientras no esté el video, pasan fotos reales de la marca con un zoom lento (como si fuera un video).
+ * Portada de la home: foto a pantalla completa que rota entre deportes, con un solo bloque de texto
+ * a la izquierda (etiqueta → título → descripción → botones) y pestañas de deporte abajo.
  * Cuando el cliente mande el video: guardarlo en /public/home/hero.mp4 y completar VIDEO.
  */
 const VIDEO: string | null = null // '/home/hero.mp4'
-// Fotos de la portada (la de pesca va primero). pos: dónde está la persona (en el celular se ve una franja angosta de la foto, por eso importa). qué parte de la foto queda a la vista en pantallas anchas
-const SLIDES = [
-  { src: '/real/pesca-trucha.webp', label: 'Pesca', pos: 'object-[58%_45%]' },
-  { src: '/real/padel-gugu.webp', label: 'Pádel', pos: 'object-[50%_36%]' },
-  { src: '/real/hero-hockey.webp', label: 'Hockey', pos: 'object-[78%_50%]' },
-  { src: '/real/hero-trekking.webp', label: 'Trekking', pos: 'object-[52%_50%]' },
-  { src: '/real/hero-golf.webp', label: 'Golf', pos: 'object-[82%_50%]' },
+
+type Slide = {
+  label: string
+  /** Categoría a la que lleva el botón principal */
+  href: string
+  alt: string
+  /** Foto horizontal (compu) */
+  src: string
+  /** Foto vertical para el celular (recortada alrededor de la persona) */
+  mobile: string
+  /** Encuadre en compu: la persona hacia la derecha, sin texto encima */
+  pos: string
+}
+
+const SLIDES: Slide[] = [
+  { label: 'Pesca', href: '/king-fishing', alt: 'Pescador con campera Yaguá mostrando una trucha en el río', src: '/real/pesca-trucha.webp', mobile: '/real/pesca-trucha-m.webp', pos: 'md:object-[60%_40%]' },
+  { label: 'Pádel', href: '/padel', alt: 'Jugador de pádel con ropa Yaguá, esperando la pelota en posición de defensa', src: '/real/padel-gugu.webp', mobile: '/real/padel-gugu.webp', pos: 'md:object-[50%_36%]' },
+  { label: 'Hockey', href: '/hockey', alt: 'Jugadora de hockey llevando la bocha en una cancha de noche', src: '/real/hero-hockey.webp', mobile: '/real/hero-hockey-m.webp', pos: 'md:object-right' },
+  { label: 'Trekking', href: '/trekking', alt: 'Persona haciendo trekking entre las piedras de un río de montaña', src: '/real/hero-trekking.webp', mobile: '/real/hero-trekking-m.webp', pos: 'md:object-right' },
+  { label: 'Golf', href: '/golf', alt: 'Golfista terminando el swing en la cancha al atardecer', src: '/real/hero-golf.webp', mobile: '/real/hero-golf-m.webp', pos: 'md:object-right' },
 ]
-const SLIDE_MS = 5500
+const SLIDE_MS = 6000
 
-export function Hero() {
-  const ref = useRef<HTMLElement>(null)
-  const reduce = useReducedMotion()
-  const [i, setI] = useState(0)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', reduce ? '0%' : '30%'])
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, reduce ? 1 : 0])
+/** Foto con dirección de arte: vertical en el celular, horizontal en compu (<picture>) */
+function SlideImage({ s, first }: { s: Slide; first: boolean }) {
+  const common = { alt: s.alt, fill: true, sizes: '100vw', quality: 80 } as const
+  const {
+    props: { srcSet: mobileSet },
+  } = getImageProps({ ...common, src: s.mobile })
+  const {
+    props: { srcSet: desktopSet, ...rest },
+  } = getImageProps({ ...common, src: s.src, priority: first, loading: first ? undefined : 'lazy' })
+  return (
+    <picture>
+      <source media="(max-width: 767px)" srcSet={mobileSet} sizes="100vw" />
+      {/* eslint-disable-next-line jsx-a11y/alt-text -- el alt viene en rest (getImageProps) */}
+      <img {...rest} srcSet={desktopSet} className={cn('object-cover object-center', s.pos)} />
+    </picture>
+  )
+}
 
+/** "Reducir movimiento" del sistema, leído directo y actualizado si cambia */
+function usePrefersReducedMotion() {
+  const [reduce, setReduce] = useState(false)
   useEffect(() => {
-    if (VIDEO || reduce) return
-    // Un temporizador por foto: si la persona toca una rayita, esa foto dura su tiempo completo
-    const t = setTimeout(() => setI((n) => (n + 1) % SLIDES.length), SLIDE_MS)
-    return () => clearTimeout(t)
-  }, [i, reduce])
+    const m = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const sync = () => setReduce(m.matches)
+    sync()
+    m.addEventListener('change', sync)
+    return () => m.removeEventListener('change', sync)
+  }, [])
+  return reduce
+}
 
-  // Con tocar apenas la rueda (o deslizar un poco el dedo) desde la portada, baja sola hasta "Elegí tu deporte"
+/** Con tocar apenas la rueda (o deslizar un poco el dedo) desde la portada, baja sola hasta "Elegí tu deporte" */
+function useHeroAutoScroll(reduce: boolean | null) {
   useEffect(() => {
     if (reduce) return
     let busy = false
@@ -64,8 +94,8 @@ export function Hero() {
       if (touchY - e.touches[0].clientY > 12 && inHero()) { e.preventDefault(); go() }
     }
     const onKey = (e: KeyboardEvent) => {
-      const t = e.target as HTMLElement
-      if (t.closest('input, textarea, select')) return
+      // Sobre botones, links o campos, las teclas hacen lo suyo (la barra espaciadora activa el botón)
+      if ((e.target as HTMLElement).closest('input, textarea, select, button, a, [role="tab"]')) return
       if (['ArrowDown', 'PageDown', ' '].includes(e.key) && inHero()) { e.preventDefault(); go() }
     }
     window.addEventListener('wheel', onWheel, { passive: false })
@@ -79,106 +109,141 @@ export function Hero() {
       window.removeEventListener('keydown', onKey)
     }
   }, [reduce])
+}
 
-  const appear = (delay: number) =>
-    reduce ? {} : { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { delay, duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } }
+export function Hero() {
+  const reduce = usePrefersReducedMotion()
+  const [i, setI] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const autoplay = !VIDEO && !reduce
+  const slide = SLIDES[i]
+  const next = () => setI((n) => (n + 1) % SLIDES.length)
+
+  useHeroAutoScroll(reduce)
+
+  // Flechas izquierda/derecha entre pestañas (patrón de tabs accesible)
+  const onTabKey = (e: React.KeyboardEvent, k: number) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+    e.preventDefault()
+    const n = (k + (e.key === 'ArrowRight' ? 1 : -1) + SLIDES.length) % SLIDES.length
+    setI(n)
+    document.getElementById(`hero-tab-${n}`)?.focus()
+  }
 
   return (
-    <section ref={ref} className="relative flex h-svh min-h-[560px] flex-col overflow-hidden bg-brand-primary text-white">
-      {/* Fondo: video o fotos que se van pasando */}
+    <section
+      aria-roledescription="carrusel"
+      aria-label="Deportes destacados"
+      className="relative h-svh min-h-[600px] overflow-hidden bg-brand-primary text-white"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* Fondo: video o fotos apiladas con crossfade de 600ms */}
       <div className="absolute inset-0">
         {VIDEO ? (
           <video src={VIDEO} autoPlay muted loop playsInline className="h-full w-full object-cover" />
         ) : (
-          <AnimatePresence initial={false}>
-            <motion.div
-              key={SLIDES[i].src}
-              className="absolute inset-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.4, ease: 'easeInOut' }}
+          SLIDES.map((s, k) => (
+            <div
+              key={s.src}
+              aria-hidden={k !== i}
+              className={cn('absolute inset-0 transition-opacity ease-in-out motion-reduce:transition-none', k === i ? 'opacity-100' : 'opacity-0')}
+              style={{ transitionDuration: '600ms' }}
             >
-              <motion.div
-                className="absolute inset-0"
-                initial={{ scale: reduce ? 1 : 1.14 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: (SLIDE_MS + 1400) / 1000, ease: 'linear' }}
-              >
-                <Image src={SLIDES[i].src} alt="" fill priority={i === 0} sizes="100vw" className={`object-cover ${SLIDES[i].pos}`} />
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
+              <SlideImage s={s} first={k === 0} />
+            </div>
+          ))
         )}
-        {/* Oscurecido para que el texto se lea siempre */}
-        <div className="absolute inset-0 bg-black/45" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+        {/* Degradé: oscuro a la izquierda (texto) y transparente desde el 60% (persona a la derecha) */}
+        <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(0,0,0,0.75)_0%,rgba(0,0,0,0.45)_35%,rgba(0,0,0,0)_60%)] md:block" />
+        {/* Arriba, para la navbar; abajo, para las pestañas. En el celular el de abajo es más fuerte */}
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/50 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/90 via-black/50 to-transparent md:h-1/3 md:from-black/60 md:via-black/20" />
       </div>
 
-      {/* Contenido */}
-      <motion.div style={{ y: contentY, opacity: contentOpacity }} className="relative mx-auto flex w-full max-w-[1440px] flex-1 flex-col px-4 sm:px-6 lg:px-10">
-        {/* Ojos de la marca arriba (la barra de menú aparece recién al deslizar), sin fondo */}
-        <motion.div {...appear(0.05)} className="pt-12 lg:pt-16">
-          <Link href="/" aria-label="Yaguá, inicio" className="inline-block">
-            <Image src="/brand/yagua-eyes.svg" alt="Yaguá" width={140} height={40} priority className="h-10 w-auto origin-center animate-blink lg:h-12" />
-          </Link>
-        </motion.div>
-        <div className="flex flex-1 items-center">
-          <h1 className="font-display text-[3.4rem] font-extrabold leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl xl:text-[8.5rem]">
-            {[['Mirada', ''], ['de', ''], ['yaguá.', 'text-brand-secondary']].map(([w, c], k) => (
-              <span key={w} className={`${k === 0 ? 'block w-fit' : 'inline-block'} mr-[0.22em] overflow-hidden pb-[0.08em] align-bottom`}>
-                <motion.span
-                  className={`inline-block ${c}`}
-                  initial={reduce ? false : { y: '110%' }}
-                  animate={{ y: 0 }}
-                  transition={{ delay: 0.15 + k * 0.14, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  {w}
-                </motion.span>
-              </span>
-            ))}
+      {/* Bloque de texto: abajo en el celular, centrado verticalmente en compu */}
+      <div className="relative mx-auto flex h-full w-full max-w-[1440px] flex-col justify-end px-4 pb-28 pt-24 sm:px-6 md:justify-center md:pb-24 lg:px-10">
+        <div className="max-w-[560px]">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.p
+              key={slide.label}
+              initial={reduce ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? undefined : { opacity: 0, y: -4 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
+              className="font-display text-sm font-extrabold uppercase tracking-[0.3em] text-brand-secondary"
+            >
+              {slide.label}
+            </motion.p>
+          </AnimatePresence>
+          <h1 className="mt-3 font-display text-[clamp(3rem,7vw,6rem)] font-extrabold leading-none tracking-tight">
+            Mirada de <span className="text-brand-secondary">yaguá.</span>
           </h1>
+          <p className="mt-5 text-[17px] leading-relaxed text-white/85 md:text-lg">
+            Ropa y equipamiento para entrenar, jugar y salir al río. Hecho en Concepción del Uruguay, con la garra del litoral.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href={`${slide.href}?orden=novedades`}
+              className="group inline-flex w-full items-center justify-center gap-2 bg-brand-secondary px-6 py-3.5 font-display text-base font-bold uppercase tracking-wide text-brand-ink transition hover:brightness-110 sm:w-auto"
+            >
+              Ver novedades
+              <ArrowRight size={20} aria-hidden className="transition-transform duration-200 group-hover:translate-x-1" />
+            </Link>
+            <Link
+              href="#deportes"
+              className="inline-flex w-full items-center justify-center border-2 border-white px-6 py-3 font-display text-base font-bold uppercase tracking-wide text-white transition hover:bg-white hover:text-brand-ink sm:w-auto"
+            >
+              Elegí tu deporte
+            </Link>
+          </div>
         </div>
+      </div>
 
-        {/* Pie de la portada: frase chica a la izquierda, botones a la derecha */}
-        <div className="flex flex-col gap-6 pb-8 sm:flex-row sm:items-end sm:justify-between lg:pb-12">
-          <motion.div {...appear(0.55)} className="max-w-sm">
-            <p className="font-display text-sm font-bold uppercase leading-snug tracking-wide text-white/90">
-              Ropa y equipamiento para entrenar, jugar y salir al río. Hecho en Concepción del Uruguay, con la garra del litoral.
-            </p>
-            {/* Indicador de fotos */}
-            {!VIDEO && (
-              <div className="mt-5 flex items-center gap-3">
-                {SLIDES.map((s, k) => (
-                  <button key={s.src} type="button" onClick={() => setI(k)} aria-label={`Ver foto de ${s.label}`} className="group py-2">
-                    <span className="relative block h-0.5 w-10 overflow-hidden bg-white/30">
-                      {k === i && (
-                        <motion.span
-                          key={`bar-${i}`}
-                          className="absolute inset-0 origin-left bg-brand-secondary"
-                          initial={{ scaleX: reduce ? 1 : 0 }}
-                          animate={{ scaleX: 1 }}
-                          transition={{ duration: SLIDE_MS / 1000, ease: 'linear' }}
+      {/* Pestañas de deporte, con barra de progreso del slide */}
+      {!VIDEO && (
+        <div className="absolute inset-x-0 bottom-0">
+          <div className="mx-auto max-w-[1440px] px-4 pb-6 sm:px-6 lg:px-10 lg:pb-8">
+            <div role="tablist" aria-label="Elegí el deporte de la portada" className="-mx-1 flex gap-1 overflow-x-auto [scrollbar-width:none] sm:gap-4">
+              {SLIDES.map((s, k) => {
+                const active = k === i
+                return (
+                  <button
+                    key={s.label}
+                    id={`hero-tab-${k}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    tabIndex={active ? 0 : -1}
+                    onClick={() => setI(k)}
+                    onKeyDown={(e) => onTabKey(e, k)}
+                    className={cn(
+                      'shrink-0 px-1 pt-2 text-left font-display text-xs font-extrabold uppercase tracking-[0.2em] transition-colors sm:text-sm',
+                      active ? 'text-white' : 'text-white/50 hover:text-white/80',
+                    )}
+                  >
+                    {s.label}
+                    <span className="mt-2 block h-[3px] w-full min-w-12 overflow-hidden bg-white/20">
+                      {active && (
+                        <span
+                          key={`${i}-${autoplay}`}
+                          className="block h-full origin-left bg-brand-secondary"
+                          style={
+                            autoplay
+                              ? { animation: `hero-progress ${SLIDE_MS}ms linear forwards`, animationPlayState: paused ? 'paused' : 'running' }
+                              : undefined
+                          }
+                          onAnimationEnd={autoplay ? next : undefined}
                         />
                       )}
                     </span>
                   </button>
-                ))}
-                <span className="ml-1 font-display text-xs font-bold uppercase tracking-[0.2em] text-white/70">{SLIDES[i].label}</span>
-              </div>
-            )}
-          </motion.div>
-          <motion.div {...appear(0.7)} className="flex flex-wrap items-center gap-3">
-            <Link href="/buscar?orden=novedades" className={buttonClass.lime}>
-              Ver novedades <ArrowRight size={20} className="transition group-hover:translate-x-1" />
-            </Link>
-            <Link href="#deportes" className="inline-flex items-center gap-3 border-2 border-white/80 px-6 py-3 font-display text-lg font-bold uppercase tracking-wide transition hover:border-brand-accent hover:bg-brand-accent">
-              Elegí tu deporte <ArrowDown size={18} />
-            </Link>
-          </motion.div>
+                )
+              })}
+            </div>
+          </div>
         </div>
-      </motion.div>
-
+      )}
     </section>
   )
 }
