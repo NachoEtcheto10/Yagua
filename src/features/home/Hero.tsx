@@ -72,10 +72,10 @@ export function Hero() {
 
       {/* Contenido */}
       <motion.div style={{ y: contentY, opacity: contentOpacity }} className="relative mx-auto flex w-full max-w-[1440px] flex-1 flex-col px-4 sm:px-6 lg:px-10">
-        {/* Logo arriba (la barra de menú aparece recién al deslizar). Placa blanca: los ojos van en negro */}
-        <motion.div {...appear(0.05)} className="pt-5 lg:pt-8">
-          <Link href="/" aria-label="Yaguá, inicio" className="inline-block bg-white px-4 py-2.5">
-            <Image src="/brand/yagua-logo.svg" alt="Yaguá" width={104} height={45} priority className="h-9 w-auto lg:h-11" />
+        {/* Ojos de la marca arriba (la barra de menú aparece recién al deslizar), sin fondo */}
+        <motion.div {...appear(0.05)} className="pt-6 lg:pt-9">
+          <Link href="/" aria-label="Yaguá, inicio" className="inline-block">
+            <Image src="/brand/yagua-eyes.svg" alt="Yaguá" width={140} height={40} priority className="h-10 w-auto origin-center animate-blink lg:h-12" />
           </Link>
         </motion.div>
         <div className="flex flex-1 items-center">
@@ -96,7 +96,7 @@ export function Hero() {
         </div>
 
         {/* Pie de la portada: frase chica a la izquierda, botones a la derecha */}
-        <div className="flex flex-col gap-6 pb-8 sm:flex-row sm:items-end sm:justify-between lg:pb-12">
+        <div className="flex flex-col gap-6 pb-16 sm:flex-row sm:items-end sm:justify-between xl:pb-12">
           <motion.div {...appear(0.55)} className="max-w-sm">
             <p className="font-display text-sm font-bold uppercase leading-snug tracking-wide text-white/90">
               Ropa y equipamiento para entrenar, jugar y salir al río. Hecho en Concepción del Uruguay, con la garra del litoral.
@@ -133,6 +133,26 @@ export function Hero() {
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Indicador para deslizar: un "mouse" con un punto que baja. Lleva a Elegí tu deporte */}
+      <motion.a
+        href="#deportes"
+        aria-label="Deslizá para ver más"
+        style={{ opacity: contentOpacity }}
+        initial={reduce ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.1, duration: 0.8 }}
+        className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-white/80 transition hover:text-white xl:bottom-10"
+      >
+        <span className="relative h-9 w-[22px] rounded-full border-2 border-current">
+          <motion.span
+            className="absolute left-1/2 top-1.5 h-2 w-1 -translate-x-1/2 rounded-full bg-brand-secondary"
+            animate={reduce ? undefined : { y: [0, 12, 12], opacity: [1, 0, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', times: [0, 0.7, 1] }}
+          />
+        </span>
+        <span className="hidden font-display text-[11px] font-bold uppercase tracking-[0.3em] xl:block">Deslizá</span>
+      </motion.a>
     </section>
   )
 }
