@@ -1,4 +1,4 @@
-import { ArrowRight, Fish, Shirt } from 'lucide-react'
+import { ArrowRight, Shirt } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Carousel } from '@/components/ui/Carousel'
@@ -12,7 +12,8 @@ import { Litoral } from '@/features/home/Litoral'
 import { ProductTabs } from '@/features/home/ProductTabs'
 import { CampaignCarousel } from '@/features/home/CampaignCarousel'
 import { Collaborations } from '@/features/home/Collaborations'
-import { ExpandingMedia, HomeFeatures } from '@/features/home/Scrolly'
+import { HomeFeatures } from '@/features/home/Scrolly'
+import { KingFishing } from '@/features/home/KingFishing'
 import { getActiveCampaigns, getCommunity } from '@/features/home/queries'
 
 export const revalidate = 300
@@ -21,7 +22,7 @@ export const revalidate = 300
 const CARD_FOCUS: Record<string, string> = {
   ninos: 'object-[50%_32%]', // la foto tiene un título arriba: se muestra la cara del nene, no el título
   accesorios: 'object-[50%_25%]', // la gorra y la cara
-  padel: 'object-[50%_35%]',
+  padel: 'object-[50%_30%]',
 }
 
 export default async function HomePage() {
@@ -29,7 +30,7 @@ export default async function HomePage() {
     getSports(),
     getNewArrivals(10),
     getBestSellers(10),
-    getBySport('king-fishing', 6),
+    getBySport('king-fishing', 8),
     getActiveCampaigns(),
     getCommunity(),
   ])
@@ -76,17 +77,6 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Foto que se agranda hasta ocupar la pantalla */}
-      <ExpandingMedia
-        src="/real/padel-club.webp"
-        alt="Dos jugadores con ropa Yaguá en una cancha de pádel"
-        pos="object-[50%_10%]"
-        eyebrow="Hecho para moverte"
-        title="Jugá con garra"
-        text="Ropa técnica para entrenar, competir y disfrutar cada cancha y cada camino."
-        cta={{ href: '/buscar?orden=novedades', label: 'Ver novedades' }}
-      />
-
       {/* 3. Novedades / Lo más vendido */}
       <section className="pb-16 lg:pb-24">
         <Container>
@@ -132,32 +122,8 @@ export default async function HomePage() {
       {/* Por qué Yaguá: foto fija que cambia con cada característica */}
       <HomeFeatures />
 
-      {/* 5. King Fishing */}
-      <section className="relative overflow-hidden bg-kf-deep text-white">
-        <Image src="/sports/nautica-2.webp" alt="" fill sizes="100vw" className="object-cover opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-kf-deep via-kf-deep/90 to-kf-deep/40" />
-        <Container className="relative py-16 lg:py-24">
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.6fr] lg:items-end">
-            <Reveal>
-              <p className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-[0.3em] text-kf-gold">
-                <Fish size={18} /> Pesca y aventura
-              </p>
-              <h2 className="mt-3 font-display text-6xl font-black uppercase italic leading-[0.85] lg:text-8xl">
-                King<br />Fishing
-              </h2>
-              <p className="mt-5 max-w-sm text-white/80">Ropa técnica NeoDry con protección UV, bolsos estancos y equipos para pasar el día en el río Uruguay.</p>
-              <Link href="/king-fishing" className="mt-8 inline-flex items-center gap-3 bg-kf-gold px-6 py-3.5 font-display text-lg font-bold uppercase tracking-wide text-kf-deep transition hover:bg-white">
-                Entrar a King Fishing <ArrowRight size={20} />
-              </Link>
-            </Reveal>
-            <div className="[&_h3]:text-white [&_p]:text-white/70">
-              <Carousel label="Productos King Fishing" itemClass="w-[62%] sm:w-[40%] lg:w-[31%]" dark>
-                {kingFishing.map((p) => <ProductCard key={p.id} product={p} />)}
-              </Carousel>
-            </div>
-          </div>
-        </Container>
-      </section>
+      {/* 5. King Fishing: pesca y aventura (indumentaria Kiiing Adventure) */}
+      <KingFishing products={kingFishing} />
 
       {/* 6. Personalizados para equipos */}
       <section className="py-16 lg:py-24">

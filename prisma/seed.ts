@@ -34,7 +34,7 @@ const SPORTS = [
   {
     slug: 'padel', name: 'Pádel', tagline: 'Moda + Rendimiento',
     description: 'Paletas Yamaha, paleteros, pelotas e indumentaria para dominar el blindex.',
-    heroImage: '/sports/padel.webp', cardImage: '/real/padel-abasto.webp',
+    heroImage: '/sports/padel.webp', cardImage: '/real/padel-gugu-accion.webp',
     categories: [['paletas', 'Paletas'], ['paleteros', 'Paleteros'], ['pelotas', 'Pelotas'], ['indumentaria', 'Indumentaria']],
   },
   {

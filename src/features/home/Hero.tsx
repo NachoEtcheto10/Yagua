@@ -13,11 +13,12 @@ import { getLenis } from '@/components/ui/SmoothScroll'
  * Cuando el cliente mande el video: guardarlo en /public/home/hero.mp4 y completar VIDEO.
  */
 const VIDEO: string | null = null // '/home/hero.mp4'
-// Fotos reales de la marca. pos: qué parte de la foto queda a la vista en pantallas anchas
+// Fotos de la portada (pádel y pesca son de la marca). pos: qué parte de la foto queda a la vista en pantallas anchas
 const SLIDES = [
   { src: '/real/padel-gugu.webp', label: 'Pádel', pos: 'object-[50%_36%]' },
   { src: '/real/pesca-trucha.webp', label: 'Pesca', pos: 'object-[55%_45%]' },
-  { src: '/real/comunidad.webp', label: 'Comunidad', pos: 'object-[50%_18%]' },
+  { src: '/sports/trekking.webp', label: 'Trekking', pos: 'object-center' },
+  { src: '/sports/golf.webp', label: 'Golf', pos: 'object-[60%_50%]' },
 ]
 const SLIDE_MS = 5500
 

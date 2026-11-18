@@ -1,144 +1,191 @@
 'use client'
-import { AnimatePresence, motion, useMotionTemplate, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
 import { ArrowRight, MapPin, PenTool, Shirt, Wind, type LucideIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
-import { buttonClass, Container } from '@/components/ui/Container'
+import { Container } from '@/components/ui/Container'
+import { cn } from '@/lib/format'
 
 /* ------------------------------------------------------------------ */
-/* 2. Foto que se agranda hasta ocupar toda la pantalla                */
+/* "Por qué Yaguá": foto fija a la izquierda que cambia con cada razón  */
 /* ------------------------------------------------------------------ */
 
-export function ExpandingMedia({
-  src, alt, eyebrow, title, text, cta, pos = 'object-center',
-}: { src: string; alt: string; eyebrow: string; title: string; text: string; cta: { href: string; label: string }; pos?: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduce = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end end'] })
-  // Arranca recortada (márgenes a los costados y arriba, puntas redondeadas) y termina a pantalla completa
-  const side = useTransform(scrollYProgress, [0.15, 0.6], reduce ? [0, 0] : [16, 0])
-  const top = useTransform(scrollYProgress, [0.15, 0.6], reduce ? [0, 0] : [22, 0])
-  const radius = useTransform(scrollYProgress, [0.15, 0.6], reduce ? [0, 0] : [28, 0])
-  const clipPath = useMotionTemplate`inset(${top}% ${side}% 0% ${side}% round ${radius}px)`
-  const scale = useTransform(scrollYProgress, [0.15, 0.8], reduce ? [1, 1] : [1.25, 1])
-  const cardY = useTransform(scrollYProgress, [0.55, 0.85], reduce ? [0, 0] : [80, 0])
-  const cardOpacity = useTransform(scrollYProgress, [0.55, 0.8], reduce ? [1, 1] : [0, 1])
-
-  return (
-    <section ref={ref} className="relative h-[170vh] bg-white">
-      <div className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden lg:top-[72px] lg:h-[calc(100svh-72px)]">
-        <motion.div style={{ clipPath }} className="absolute inset-0 overflow-hidden">
-          <motion.div style={{ scale }} className="absolute inset-0">
-            <Image src={src} alt={alt} fill sizes="100vw" className={`object-cover ${pos}`} />
-          </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-        </motion.div>
-        <motion.div style={{ y: cardY, opacity: cardOpacity }} className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6 lg:inset-x-auto lg:bottom-10 lg:left-10 lg:max-w-xl">
-          <div className="bg-brand-primary/85 p-6 text-white backdrop-blur-md lg:p-8">
-            <p className="flex items-center gap-2 font-display text-xs font-extrabold uppercase tracking-[0.25em] text-brand-secondary">
-              <span className="h-2.5 w-2.5 bg-brand-accent" /> {eyebrow}
-            </p>
-            <h2 className="mt-3 font-display text-3xl font-black uppercase leading-[0.95] lg:text-5xl">{title}</h2>
-            <p className="mt-3 text-white/75">{text}</p>
-            <Link href={cta.href} className={`${buttonClass.lime} mt-6`}>
-              {cta.label} <ArrowRight size={20} className="transition group-hover:translate-x-1" />
-            </Link>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  )
+type Feature = {
+  icon: LucideIcon
+  title: string
+  text: string
+  tags: string[]
+  cta: { href: string; label: string }
+  image: string
+  alt: string
+  pos?: string
 }
 
-/* ------------------------------------------------------------------ */
-/* 3. Foto fija a la izquierda que cambia con cada característica      */
-/* ------------------------------------------------------------------ */
+const FEATURES: Feature[] = [
+  {
+    icon: Wind,
+    title: 'Telas técnicas',
+    text: 'Livianas, de secado rápido y cómodas para moverte. Pensadas para entrenar con calor, correr temprano o jugar el tercer set.',
+    tags: ['Secado rápido', 'Livianas', 'Cómodas'],
+    cta: { href: '/running', label: 'Ver running' },
+    image: '/real/camiseta-lima.webp',
+    alt: 'Camiseta deportiva Yaguá color lima, de frente y de espalda',
+  },
+  {
+    icon: PenTool,
+    title: 'Diseño propio',
+    text: 'Cada colección se diseña con la identidad del yaguareté: los ojos, las manchas y los colores de la marca, en ropa y accesorios.',
+    tags: ['Los ojos del yaguareté', 'Colores de la marca'],
+    cta: { href: '/buscar?orden=novedades', label: 'Ver novedades' },
+    image: '/real/bolso-ojos.webp',
+    alt: 'Bolso Yaguá negro con los ojos del yaguareté',
+  },
+  {
+    icon: Shirt,
+    title: 'Personalizados para tu equipo',
+    text: 'Camisetas, shorts y medias con tus colores, escudo, nombres y números. Mientras más prendas, mejor precio.',
+    tags: ['Escudo y colores', 'Nombres y números', 'Desde 10 prendas'],
+    cta: { href: '/personalizados', label: 'Diseñar camiseta' },
+    image: '/real/equipo-parque-sur.webp',
+    alt: 'Equipo personalizado de Parque Sur: camiseta, short y medias',
+  },
+  {
+    icon: MapPin,
+    title: 'Hecho en el litoral',
+    text: 'Somos de Concepción del Uruguay. Ropa para la gente del río, del club y de la ruta, con envíos a todo el país.',
+    tags: ['Concepción del Uruguay', 'Envíos a todo el país'],
+    cta: { href: '/king-fishing', label: 'Ver King Fishing' },
+    image: '/real/pesca-dueno.webp',
+    alt: 'Pescando con mosca en el río con campera Yaguá',
+    pos: 'object-[50%_30%]',
+  },
+]
 
-export type Feature = { icon: LucideIcon; title: string; text: string; image: string; alt: string }
+const pad = (n: number) => String(n).padStart(2, '0')
 
-function FeatureItem({ f, i, onActive }: { f: Feature; i: number; onActive: (i: number) => void }) {
+function FeatureItem({ f, i, active, onActive }: { f: Feature; i: number; active: boolean; onActive: (i: number) => void }) {
   const ref = useRef<HTMLLIElement>(null)
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    // Activa la característica cuando cruza la mitad de la pantalla
+    // Se activa cuando cruza la mitad de la pantalla
     const io = new IntersectionObserver(([e]) => e.isIntersecting && onActive(i), { rootMargin: '-50% 0px -50% 0px' })
     io.observe(el)
     return () => io.disconnect()
   }, [i, onActive])
   const Icon = f.icon
   return (
-    <li ref={ref} className="py-10 lg:flex lg:min-h-[70vh] lg:flex-col lg:justify-center lg:py-0">
-      {/* En el celular cada característica muestra su foto */}
-      <div className="relative mb-6 aspect-[4/3] overflow-hidden rounded-xl lg:hidden">
-        <Image src={f.image} alt={f.alt} fill sizes="100vw" className="object-cover" />
+    <li ref={ref} className="py-10 lg:flex lg:min-h-[78vh] lg:flex-col lg:justify-center lg:py-0">
+      {/* En el celular cada razón muestra su foto */}
+      <div className="relative mb-6 aspect-[4/5] overflow-hidden rounded-2xl bg-white/5 lg:hidden">
+        <Image src={f.image} alt={f.alt} fill sizes="100vw" className={cn('object-cover', f.pos)} />
       </div>
-      <div className="flex gap-5">
-        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-lg border border-white/15 text-brand-secondary">
-          <Icon size={24} />
-        </span>
-        <div className="min-w-0 flex-1">
-          <h3 className="border-b border-white/15 pb-4 font-display text-2xl font-black uppercase lg:text-3xl">{f.title}</h3>
-          <p className="mt-4 max-w-md text-white/70">{f.text}</p>
+      <div className={cn('transition duration-500 lg:opacity-30', active && 'lg:opacity-100')}>
+        <div className="flex items-center gap-4">
+          <span className="font-display text-6xl font-black leading-none text-transparent [-webkit-text-stroke:1.5px_var(--color-brand-secondary)] lg:text-7xl">
+            {pad(i + 1)}
+          </span>
+          <span className="grid h-12 w-12 place-items-center rounded-full bg-brand-secondary text-brand-ink">
+            <Icon size={22} />
+          </span>
         </div>
+        <h3 className="mt-6 font-display text-3xl font-black uppercase leading-[0.95] lg:text-5xl">{f.title}</h3>
+        <p className="mt-4 max-w-md text-lg text-white/70">{f.text}</p>
+        <ul className="mt-6 flex flex-wrap gap-2">
+          {f.tags.map((t) => (
+            <li key={t} className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/80">{t}</li>
+          ))}
+        </ul>
+        <Link href={f.cta.href} className="group mt-8 inline-flex items-center gap-2 font-display text-lg font-bold uppercase tracking-wide text-brand-secondary">
+          {f.cta.label}
+          <ArrowRight size={20} className="transition group-hover:translate-x-1" />
+        </Link>
       </div>
     </li>
   )
 }
 
-export function StickyFeatures({ eyebrow, title, features }: { eyebrow: string; title: string; features: Feature[] }) {
+export function HomeFeatures() {
   const [active, setActive] = useState(0)
-  const f = features[active]
+  const reduce = useReducedMotion()
+  const listRef = useRef<HTMLUListElement>(null)
+  const { scrollYProgress } = useScroll({ target: listRef, offset: ['start center', 'end center'] })
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 25 })
+  const f = FEATURES[active]
+
   return (
-    <section className="bg-brand-primary text-white">
-      <Container className="py-20 lg:py-28">
-        <p className="flex items-center gap-2 font-display text-xs font-extrabold uppercase tracking-[0.25em] text-white/60">
-          <span className="h-2.5 w-2.5 bg-brand-secondary" /> {eyebrow}
-        </p>
-        <h2 className="mt-3 max-w-3xl font-display text-4xl font-black uppercase leading-[0.95] lg:text-6xl">{title}</h2>
+    <section className="relative overflow-clip bg-brand-primary text-white">
+      {/* manchas del yaguareté muy sutiles */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-rosettes-dark opacity-[0.05]" />
+      <Container className="relative py-20 lg:py-28">
+        {/* Encabezado: título a la izquierda, intro a la derecha */}
+        <div className="grid gap-6 border-b border-white/15 pb-10 lg:grid-cols-2 lg:items-end lg:gap-20">
+          <div>
+            <p className="flex items-center gap-2 font-display text-xs font-extrabold uppercase tracking-[0.25em] text-white/60">
+              <span className="h-2.5 w-2.5 bg-brand-secondary" /> Por qué Yaguá
+            </p>
+            <h2 className="mt-3 font-display text-5xl font-black uppercase leading-[0.9] lg:text-7xl">
+              Cada detalle<br />
+              <span className="text-brand-secondary">tiene un motivo</span>
+            </h2>
+          </div>
+          <p className="max-w-md text-lg text-white/70 lg:justify-self-end">
+            Ropa deportiva pensada desde la cancha y el río: telas que acompañan, diseño con identidad y prendas para todo tu equipo.
+          </p>
+        </div>
+
         <div className="mt-6 grid gap-12 lg:mt-0 lg:grid-cols-2 lg:gap-20">
+          {/* Foto fija (solo compu) */}
           <div className="hidden lg:block">
-            <div className="sticky top-[calc(72px+12vh)] aspect-[4/5] max-h-[72vh] overflow-hidden rounded-xl bg-white/5">
+            <div className="sticky top-[calc(72px+10vh)] aspect-[4/5] max-h-[76vh] overflow-hidden rounded-2xl bg-white/5">
               <AnimatePresence initial={false}>
                 <motion.div
                   key={f.image}
-                  initial={{ opacity: 0, scale: 1.08 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                  initial={reduce ? { opacity: 0 } : { clipPath: 'inset(100% 0% 0% 0%)' }}
+                  animate={reduce ? { opacity: 1 } : { clipPath: 'inset(0% 0% 0% 0%)' }}
+                  exit={{ opacity: 0.999 }}
+                  transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
                   className="absolute inset-0"
                 >
-                  <Image src={f.image} alt={f.alt} fill sizes="50vw" className="object-cover" />
+                  <motion.div className="absolute inset-0" initial={{ scale: reduce ? 1 : 1.15 }} animate={{ scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}>
+                    <Image src={f.image} alt={f.alt} fill sizes="50vw" className={cn('object-cover', f.pos)} />
+                  </motion.div>
                 </motion.div>
               </AnimatePresence>
-              {/* Contador 01 / 04 */}
-              <p className="absolute bottom-4 left-4 bg-brand-primary/80 px-3 py-1.5 font-display text-sm font-extrabold tabular-nums">
-                <span className="text-brand-secondary">{String(active + 1).padStart(2, '0')}</span> / {String(features.length).padStart(2, '0')}
-              </p>
+              <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
+              {/* Contador y nombre de la razón actual */}
+              <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-4">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.p
+                    key={f.title}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.3 }}
+                    className="font-display text-2xl font-black uppercase leading-none"
+                  >
+                    {f.title}
+                  </motion.p>
+                </AnimatePresence>
+                <p className="shrink-0 font-display text-sm font-extrabold tabular-nums">
+                  <span className="text-brand-secondary">{pad(active + 1)}</span> / {pad(FEATURES.length)}
+                </p>
+              </div>
             </div>
           </div>
-          <ul>
-            {features.map((x, i) => <FeatureItem key={x.title} f={x} i={i} onActive={setActive} />)}
-          </ul>
+
+          {/* Lista con barra de progreso al costado */}
+          <div className="relative lg:pl-10">
+            <div aria-hidden className="absolute bottom-0 left-0 top-0 hidden w-px bg-white/15 lg:block">
+              <motion.div style={{ scaleY: progress }} className="h-full w-full origin-top bg-brand-secondary" />
+            </div>
+            <ul ref={listRef}>
+              {FEATURES.map((x, i) => <FeatureItem key={x.title} f={x} i={i} active={i === active} onActive={setActive} />)}
+            </ul>
+          </div>
         </div>
       </Container>
     </section>
-  )
-}
-
-/** Las cuatro razones de la marca, con su foto (fija a la izquierda en la compu) */
-export function HomeFeatures() {
-  return (
-    <StickyFeatures
-      eyebrow="Por qué Yaguá"
-      title="Cada detalle tiene un motivo"
-      features={[
-        { icon: Wind, title: 'Telas técnicas', text: 'Livianas, de secado rápido y cómodas para moverte. Pensadas para entrenar con calor, correr temprano o jugar el tercer set.', image: '/real/camiseta-lima.webp', alt: 'Camiseta deportiva Yaguá color lima, de frente y de espalda' },
-        { icon: PenTool, title: 'Diseño propio', text: 'Cada colección se diseña acá, con la identidad del yaguareté: los ojos, las manchas y los colores de la marca.', image: '/real/bolso-ojos.webp', alt: 'Bolso Yaguá negro con los ojos del yaguareté' },
-        { icon: Shirt, title: 'Personalizados para tu equipo', text: 'Camisetas con tus colores, escudo, nombres y números. Mientras más prendas, mejor precio.', image: '/real/equipo-parque-sur.webp', alt: 'Equipo personalizado de Parque Sur: camiseta, short y medias' },
-        { icon: MapPin, title: 'Hecho en el litoral', text: 'Somos de Concepción del Uruguay. Ropa para la gente del río, del club y de la ruta, con envíos a todo el país.', image: '/real/pesca-dueno.webp', alt: 'Pescando con mosca en el río con campera Yaguá' },
-      ]}
-    />
   )
 }
