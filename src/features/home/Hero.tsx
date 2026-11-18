@@ -13,13 +13,13 @@ import { getLenis } from '@/components/ui/SmoothScroll'
  * Cuando el cliente mande el video: guardarlo en /public/home/hero.mp4 y completar VIDEO.
  */
 const VIDEO: string | null = null // '/home/hero.mp4'
-// Fotos de la portada (la de pesca va primero). pos: qué parte de la foto queda a la vista en pantallas anchas
+// Fotos de la portada (la de pesca va primero). pos: dónde está la persona (en el celular se ve una franja angosta de la foto, por eso importa). qué parte de la foto queda a la vista en pantallas anchas
 const SLIDES = [
-  { src: '/real/pesca-trucha.webp', label: 'Pesca', pos: 'object-[55%_45%]' },
+  { src: '/real/pesca-trucha.webp', label: 'Pesca', pos: 'object-[58%_45%]' },
   { src: '/real/padel-gugu.webp', label: 'Pádel', pos: 'object-[50%_36%]' },
-  { src: '/real/hero-hockey.webp', label: 'Hockey', pos: 'object-[65%_50%]' },
-  { src: '/real/hero-trekking.webp', label: 'Trekking', pos: 'object-[70%_50%]' },
-  { src: '/real/hero-golf.webp', label: 'Golf', pos: 'object-[45%_50%]' },
+  { src: '/real/hero-hockey.webp', label: 'Hockey', pos: 'object-[78%_50%]' },
+  { src: '/real/hero-trekking.webp', label: 'Trekking', pos: 'object-[52%_50%]' },
+  { src: '/real/hero-golf.webp', label: 'Golf', pos: 'object-[82%_50%]' },
 ]
 const SLIDE_MS = 5500
 

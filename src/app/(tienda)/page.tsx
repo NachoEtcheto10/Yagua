@@ -8,7 +8,6 @@ import { ProductCard } from '@/features/catalog/components/ProductCard'
 import { getBestSellers, getBySport, getNewArrivals, getSports } from '@/features/catalog/queries'
 import { Ambassadors, Players, SponsorsAndAssociations } from '@/features/home/CommunityBlocks'
 import { Hero } from '@/features/home/Hero'
-import { Litoral } from '@/features/home/Litoral'
 import { ProductTabs } from '@/features/home/ProductTabs'
 import { CampaignCarousel } from '@/features/home/CampaignCarousel'
 import { Collaborations } from '@/features/home/Collaborations'
@@ -157,8 +156,6 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* 7. Identidad local: somos de Concepción del Uruguay */}
-      <Litoral />
 
       {/* 8. Embajadores */}
       <Ambassadors ambassadors={community.ambassadors} />
