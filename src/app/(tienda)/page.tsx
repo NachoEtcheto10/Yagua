@@ -22,7 +22,7 @@ export const revalidate = 300
 const CARD_FOCUS: Record<string, string> = {
   ninos: 'object-[50%_32%]', // la foto tiene un título arriba: se muestra la cara del nene, no el título
   accesorios: 'object-[50%_25%]', // la gorra y la cara
-  padel: 'object-[50%_30%]',
+  padel: 'object-[50%_45%]', // Gugú en posición de juego
 }
 
 export default async function HomePage() {

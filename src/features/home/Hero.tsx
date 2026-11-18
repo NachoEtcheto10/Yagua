@@ -13,12 +13,13 @@ import { getLenis } from '@/components/ui/SmoothScroll'
  * Cuando el cliente mande el video: guardarlo en /public/home/hero.mp4 y completar VIDEO.
  */
 const VIDEO: string | null = null // '/home/hero.mp4'
-// Fotos de la portada (pádel y pesca son de la marca). pos: qué parte de la foto queda a la vista en pantallas anchas
+// Fotos de la portada (la de pesca va primero). pos: qué parte de la foto queda a la vista en pantallas anchas
 const SLIDES = [
-  { src: '/real/padel-gugu.webp', label: 'Pádel', pos: 'object-[50%_36%]' },
   { src: '/real/pesca-trucha.webp', label: 'Pesca', pos: 'object-[55%_45%]' },
-  { src: '/sports/trekking.webp', label: 'Trekking', pos: 'object-center' },
-  { src: '/sports/golf.webp', label: 'Golf', pos: 'object-[60%_50%]' },
+  { src: '/real/padel-gugu.webp', label: 'Pádel', pos: 'object-[50%_36%]' },
+  { src: '/real/hero-hockey.webp', label: 'Hockey', pos: 'object-[65%_50%]' },
+  { src: '/real/hero-trekking.webp', label: 'Trekking', pos: 'object-[70%_50%]' },
+  { src: '/real/hero-golf.webp', label: 'Golf', pos: 'object-[45%_50%]' },
 ]
 const SLIDE_MS = 5500
 
@@ -140,7 +141,7 @@ export function Hero() {
         </div>
 
         {/* Pie de la portada: frase chica a la izquierda, botones a la derecha */}
-        <div className="flex flex-col gap-6 pb-16 sm:flex-row sm:items-end sm:justify-between xl:pb-12">
+        <div className="flex flex-col gap-6 pb-8 sm:flex-row sm:items-end sm:justify-between lg:pb-12">
           <motion.div {...appear(0.55)} className="max-w-sm">
             <p className="font-display text-sm font-bold uppercase leading-snug tracking-wide text-white/90">
               Ropa y equipamiento para entrenar, jugar y salir al río. Hecho en Concepción del Uruguay, con la garra del litoral.
@@ -178,25 +179,6 @@ export function Hero() {
         </div>
       </motion.div>
 
-      {/* Indicador para deslizar: un "mouse" con un punto que baja. Lleva a Elegí tu deporte */}
-      <motion.a
-        href="#deportes"
-        aria-label="Deslizá para ver más"
-        style={{ opacity: contentOpacity }}
-        initial={reduce ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.1, duration: 0.8 }}
-        className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-white/80 transition hover:text-white xl:bottom-10"
-      >
-        <span className="relative h-9 w-[22px] rounded-full border-2 border-current">
-          <motion.span
-            className="absolute left-1/2 top-1.5 h-2 w-1 -translate-x-1/2 rounded-full bg-brand-secondary"
-            animate={reduce ? undefined : { y: [0, 12, 12], opacity: [1, 0, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', times: [0, 0.7, 1] }}
-          />
-        </span>
-        <span className="hidden font-display text-[11px] font-bold uppercase tracking-[0.3em] xl:block">Deslizá</span>
-      </motion.a>
     </section>
   )
 }

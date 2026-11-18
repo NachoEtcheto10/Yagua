@@ -14,7 +14,7 @@ import { PrismaClient, type Gender, type ProductTag } from '../src/generated/pri
 config({ path: '.env.local' })
 config()
 
-const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL }) })
+const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: (process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL)?.replace(/sslmode=(prefer|require|verify-ca)/, 'sslmode=verify-full') }) })
 
 // ───────────────────────────── Deportes y categorías
 
@@ -34,7 +34,7 @@ const SPORTS = [
   {
     slug: 'padel', name: 'Pádel', tagline: 'Moda + Rendimiento',
     description: 'Paletas Yamaha, paleteros, pelotas e indumentaria para dominar el blindex.',
-    heroImage: '/sports/padel.webp', cardImage: '/real/padel-gugu-accion.webp',
+    heroImage: '/sports/padel.webp', cardImage: '/real/padel-gugu.webp',
     categories: [['paletas', 'Paletas'], ['paleteros', 'Paleteros'], ['pelotas', 'Pelotas'], ['indumentaria', 'Indumentaria']],
   },
   {
