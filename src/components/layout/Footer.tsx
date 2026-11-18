@@ -27,8 +27,9 @@ export function Footer({ sports }: { sports: NavSport[] }) {
         <div className="relative mx-auto grid max-w-[1440px] gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1.4fr] lg:px-10">
           <div>
             {/* Logo con los ojos en su versión original (contorno negro), sobre una placa blanca */}
-            <span className="inline-block rounded-2xl bg-white px-4 py-3">
-              <Image src="/brand/yagua-logo.svg" alt="Yaguá" width={130} height={56} className="h-12 w-auto" />
+            <span className="inline-flex flex-col items-center gap-1" role="img" aria-label="Yaguá">
+              <Image src="/brand/yagua-eyes.svg" alt="" width={130} height={37} className="h-10 w-auto" />
+              <span aria-hidden className="pl-[0.45em] font-display text-sm font-bold tracking-[0.45em] text-white">YAGUÁ</span>
             </span>
             <p className="mt-5 max-w-xs text-sm text-white/70">{SITE.description}</p>
             <div className="mt-6 flex gap-3">

@@ -67,7 +67,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
   }, [mobile])
 
   // En la home la barra va fija sobre la portada: transparente con todo en blanco,
-  // y pasa a fondo oscuro al bajar más de 50px (o al abrir el menú o el buscador)
+  // y al bajar más de 50px (o al abrir el menú o el buscador) pasa a blanca con borde, con el logo de siempre
   const overlay = pathname === '/'
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
@@ -87,8 +87,8 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
         'top-0 z-40 border-b',
         overlay
           ? cn(
-              'fixed inset-x-0 text-white transition-[background-color,box-shadow,border-color] duration-300 ease-out',
-              solid ? 'border-white/10 bg-[#111] shadow-[0_6px_24px_rgba(0,0,0,0.3)]' : 'border-transparent bg-transparent',
+              'fixed inset-x-0 transition-[background-color,box-shadow,border-color,color] duration-300 ease-out',
+              solid ? 'border-brand-line bg-white text-brand-ink shadow-[0_6px_20px_-10px_rgba(0,0,0,0.25)]' : 'border-transparent bg-transparent text-white',
             )
           : 'sticky border-brand-line bg-white',
       )}
@@ -101,11 +101,14 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
           </button>
         )}
 
-        {overlay ? (
-          // Sobre la portada: los ojos + YAGUÁ en blanco, a la izquierda
-          <Link href="/" className="mr-auto flex shrink-0 items-center gap-3 xl:mr-0" aria-label="Yaguá, ir al inicio">
-            <Image src="/brand/yagua-eyes.svg" alt="" width={98} height={28} priority className="h-8 w-auto lg:h-9" />
+        {overlay && !solid ? (
+          // Sobre la portada: solo la palabra en blanco (los ojos están en el hero)
+          <Link href="/" className="mr-auto flex h-11 shrink-0 items-center xl:mr-0" aria-label="Yaguá, ir al inicio">
             <span className="font-display text-lg font-extrabold tracking-[0.3em] lg:text-xl">YAGUÁ</span>
+          </Link>
+        ) : overlay ? (
+          <Link href="/" className="mr-auto shrink-0 xl:mr-0" aria-label="Yaguá, ir al inicio">
+            <Image src="/brand/yagua-logo.svg" alt="Yaguá" width={104} height={45} priority className="h-10 w-auto lg:h-11" />
           </Link>
         ) : (
           <Link href="/" className="mx-auto shrink-0 xl:mx-0" aria-label="Yaguá, ir al inicio">
@@ -125,7 +128,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
                     'relative flex h-[72px] items-center whitespace-nowrap px-[7px] font-display text-[13.5px] font-extrabold uppercase tracking-normal 2xl:px-3 2xl:text-[15px] 2xl:tracking-wide',
                     "after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:origin-left after:scale-x-0 after:bg-brand-accent after:transition after:content-['']",
                     (hover === s.slug || pathname.startsWith(`/${s.slug}`)) && 'after:scale-x-100',
-                    s.isSubBrand && !overlay && 'text-kf-water',
+                    s.isSubBrand && (!overlay || solid) && 'text-kf-water',
                   )}
                 >
                   {s.name}
@@ -187,7 +190,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
             initial={{ height: 0 }}
             animate={{ height: 'auto' }}
             exit={{ height: 0 }}
-            className={cn('overflow-hidden border-t text-brand-ink', overlay ? 'border-white/10' : 'border-brand-line 2xl:hidden')}
+            className={cn('overflow-hidden border-t border-brand-line text-brand-ink', !overlay && '2xl:hidden')}
           >
             <div className="px-4 py-3 sm:px-6">
               <SearchBox autoFocus onNavigate={() => setSearchOpen(false)} />

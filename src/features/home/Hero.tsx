@@ -1,7 +1,6 @@
 'use client'
-import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import { getImageProps } from 'next/image'
+import Image, { getImageProps } from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getLenis } from '@/components/ui/SmoothScroll'
@@ -164,19 +163,9 @@ export function Hero() {
       {/* Bloque de texto: abajo en el celular, centrado verticalmente en compu */}
       <div className="relative mx-auto flex h-full w-full max-w-[1440px] flex-col justify-end px-4 pb-28 pt-24 sm:px-6 md:justify-center md:pb-24 lg:px-10">
         <div className="max-w-[560px]">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.p
-              key={slide.label}
-              initial={reduce ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? undefined : { opacity: 0, y: -4 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-              className="font-display text-sm font-extrabold uppercase tracking-[0.3em] text-brand-secondary"
-            >
-              {slide.label}
-            </motion.p>
-          </AnimatePresence>
-          <h1 className="mt-3 font-display text-[clamp(3rem,7vw,6rem)] font-extrabold leading-none tracking-tight">
+          {/* Ojos de la marca con su parpadeo */}
+          <Image src="/brand/yagua-eyes.svg" alt="" width={140} height={40} priority className="h-12 w-auto origin-center animate-blink motion-reduce:animate-none lg:h-16" />
+          <h1 className="mt-5 font-display text-[clamp(3rem,7vw,6rem)] font-extrabold leading-none tracking-tight">
             Mirada de <span className="text-brand-secondary">yaguá.</span>
           </h1>
           <p className="mt-5 text-[17px] leading-relaxed text-white/85 md:text-lg">
@@ -204,7 +193,7 @@ export function Hero() {
       {!VIDEO && (
         <div className="absolute inset-x-0 bottom-0">
           <div className="mx-auto max-w-[1440px] px-4 pb-6 sm:px-6 lg:px-10 lg:pb-8">
-            <div role="tablist" aria-label="Elegí el deporte de la portada" className="-mx-1 flex gap-1 overflow-x-auto [scrollbar-width:none] sm:gap-4">
+            <div role="tablist" aria-label="Elegí el deporte de la portada" className="grid grid-cols-5 gap-1.5 sm:flex sm:gap-4">
               {SLIDES.map((s, k) => {
                 const active = k === i
                 return (
@@ -218,16 +207,16 @@ export function Hero() {
                     onClick={() => setI(k)}
                     onKeyDown={(e) => onTabKey(e, k)}
                     className={cn(
-                      'shrink-0 px-1 pt-2 text-left font-display text-xs font-extrabold uppercase tracking-[0.2em] transition-colors sm:text-sm',
+                      'min-w-0 pt-2 text-left font-display text-[10px] font-extrabold uppercase tracking-[0.08em] transition-colors sm:shrink-0 sm:px-1 sm:text-sm sm:tracking-[0.2em]',
                       active ? 'text-white' : 'text-white/50 hover:text-white/80',
                     )}
                   >
                     {s.label}
-                    <span className="mt-2 block h-[3px] w-full min-w-12 overflow-hidden bg-white/20">
+                    <span className="mt-2 block h-[3px] w-full overflow-hidden bg-white/20 sm:min-w-28">
                       {active && (
                         <span
                           key={`${i}-${autoplay}`}
-                          className="block h-full origin-left bg-brand-secondary"
+                          className="block h-full origin-left bg-brand-secondary [backface-visibility:hidden] [will-change:transform]"
                           style={
                             autoplay
                               ? { animation: `hero-progress ${SLIDE_MS}ms linear forwards`, animationPlayState: paused ? 'paused' : 'running' }

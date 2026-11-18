@@ -73,6 +73,6 @@
 
 /* Barra de progreso de las pestañas del hero (se pausa con animation-play-state) */
 @keyframes hero-progress {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  from { transform: scale3d(0, 1, 1); }
+  to { transform: scale3d(1, 1, 1); }
 }
