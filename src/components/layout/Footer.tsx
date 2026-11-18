@@ -22,52 +22,49 @@ export function Footer({ sports }: { sports: NavSport[] }) {
   return (
     <footer>
       <Newsletter />
-      <div className="relative bg-brand-primary text-white">
-        <Rosettes className="opacity-[0.04]" />
+      <div className="relative border-t border-brand-line bg-brand-mist text-brand-ink">
+        <Rosettes tone="light" className="opacity-[0.05]" />
         <div className="relative mx-auto grid max-w-[1440px] gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1.4fr] lg:px-10">
           <div>
-            {/* Logo con los ojos en su versión original (contorno negro), sobre una placa blanca */}
-            <span className="inline-flex flex-col items-center gap-1" role="img" aria-label="Yaguá">
-              <Image src="/brand/yagua-eyes.svg" alt="" width={130} height={37} className="h-10 w-auto" />
-              <span aria-hidden className="pl-[0.45em] font-display text-sm font-bold tracking-[0.45em] text-white">YAGUÁ</span>
-            </span>
-            <p className="mt-5 max-w-xs text-sm text-white/70">{SITE.description}</p>
+            {/* Logo original: ojos con contorno negro, sobre el fondo claro */}
+            <Image src="/brand/yagua-logo.svg" alt="Yaguá" width={130} height={56} className="h-12 w-auto" />
+            <p className="mt-5 max-w-xs text-sm text-brand-muted">{SITE.description}</p>
             <div className="mt-6 flex gap-3">
-              <a href={SITE.instagram} target="_blank" rel="noopener" aria-label="Instagram" className="grid h-10 w-10 place-items-center border border-white/30 hover:bg-white hover:text-brand-ink"><InstagramIcon /></a>
-              {SITE.facebook && <a href={SITE.facebook} target="_blank" rel="noopener" aria-label="Facebook" className="grid h-10 w-10 place-items-center border border-white/30 hover:bg-white hover:text-brand-ink"><FacebookIcon /></a>}
-              <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener" aria-label="WhatsApp" className="grid h-10 w-10 place-items-center border border-white/30 hover:bg-white hover:text-brand-ink"><MessageCircle size={18} /></a>
+              <a href={SITE.instagram} target="_blank" rel="noopener" aria-label="Instagram" className="grid h-10 w-10 place-items-center border border-brand-ink/20 transition hover:bg-brand-ink hover:text-brand-accent"><InstagramIcon /></a>
+              {SITE.facebook && <a href={SITE.facebook} target="_blank" rel="noopener" aria-label="Facebook" className="grid h-10 w-10 place-items-center border border-brand-ink/20 transition hover:bg-brand-ink hover:text-brand-accent"><FacebookIcon /></a>}
+              <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener" aria-label="WhatsApp" className="grid h-10 w-10 place-items-center border border-brand-ink/20 transition hover:bg-brand-ink hover:text-brand-accent"><MessageCircle size={18} /></a>
             </div>
           </div>
 
           <nav aria-label="Deportes">
             <h3 className="font-display text-lg font-bold uppercase tracking-wide">Deportes</h3>
-            <ul className="mt-4 space-y-2 text-sm text-white/75">
+            <ul className="mt-4 space-y-2 text-sm text-brand-ink/75">
               {sports.map((s) => (
-                <li key={s.slug}><Link href={`/${s.slug}`} className="hover:text-white">{s.name}</Link></li>
+                <li key={s.slug}><Link href={`/${s.slug}`} className="hover:text-brand-accent">{s.name}</Link></li>
               ))}
-              <li><Link href="/personalizados" className="hover:text-white">Personalizados</Link></li>
-              <li><Link href="/comunidad" className="hover:text-white">Comunidad</Link></li>
-              <li><Link href="/mayoristas" className="hover:text-white">Ventas mayoristas</Link></li>
+              <li><Link href="/personalizados" className="hover:text-brand-accent">Personalizados</Link></li>
+              <li><Link href="/comunidad" className="hover:text-brand-accent">Comunidad</Link></li>
+              <li><Link href="/mayoristas" className="hover:text-brand-accent">Ventas mayoristas</Link></li>
             </ul>
           </nav>
 
           <nav aria-label="Ayuda">
             <h3 className="font-display text-lg font-bold uppercase tracking-wide">Ayuda</h3>
-            <ul className="mt-4 space-y-2 text-sm text-white/75">
+            <ul className="mt-4 space-y-2 text-sm text-brand-ink/75">
               {HELP.map((h) => (
-                <li key={h.href}><Link href={h.href} className="hover:text-white">{h.label}</Link></li>
+                <li key={h.href}><Link href={h.href} className="hover:text-brand-accent">{h.label}</Link></li>
               ))}
             </ul>
           </nav>
 
           <div>
             <h3 className="font-display text-lg font-bold uppercase tracking-wide">Visitanos</h3>
-            <ul className="mt-4 space-y-3 text-sm text-white/75">
-              <li className="flex gap-2"><MapPin size={18} className="mt-0.5 shrink-0 text-brand-secondary" /> {SITE.address} · {SITE.city}</li>
-              <li className="flex gap-2"><Clock size={18} className="mt-0.5 shrink-0 text-brand-secondary" /> {SITE.hours}</li>
-              <li className="flex gap-2"><MessageCircle size={18} className="mt-0.5 shrink-0 text-brand-secondary" /> <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener" className="hover:text-white">{SITE.whatsappDisplay}</a></li>
+            <ul className="mt-4 space-y-3 text-sm text-brand-ink/75">
+              <li className="flex gap-2"><MapPin size={18} className="mt-0.5 shrink-0 text-brand-ink" /> {SITE.address} · {SITE.city}</li>
+              <li className="flex gap-2"><Clock size={18} className="mt-0.5 shrink-0 text-brand-ink" /> {SITE.hours}</li>
+              <li className="flex gap-2"><MessageCircle size={18} className="mt-0.5 shrink-0 text-brand-ink" /> <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener" className="hover:text-brand-accent">{SITE.whatsappDisplay}</a></li>
             </ul>
-            <div className="mt-4 aspect-[16/9] overflow-hidden bg-white/10">
+            <div className="mt-4 aspect-[16/9] overflow-hidden bg-brand-line">
               <iframe
                 title="Mapa del local de Yaguá"
                 loading="lazy"
@@ -79,28 +76,28 @@ export function Footer({ sports }: { sports: NavSport[] }) {
           </div>
         </div>
 
-        <div className="relative border-t border-white/15">
+        <div className="relative border-t border-brand-line">
           <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-10">
-            <p className="text-xs font-semibold uppercase tracking-wider text-white/50">Medios de pago</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand-muted">Medios de pago</p>
             <ul className="mt-2 flex flex-wrap gap-2">
               {PAYMENTS.map((p) => (
-                <li key={p} className="border border-white/25 px-2.5 py-1 text-xs text-white/80">{p}</li>
+                <li key={p} className="border border-brand-ink/15 bg-white px-2.5 py-1 text-xs text-brand-ink/80">{p}</li>
               ))}
             </ul>
           </div>
         </div>
 
-        <div className="relative border-t border-white/15">
-          <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-6 text-xs text-white/60 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-10">
+        <div className="relative border-t border-brand-line">
+          <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-6 text-xs text-brand-muted sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-10">
             <p>
               © {new Date().getFullYear()} {SITE.legalName}{SITE.cuit && ` · CUIT ${SITE.cuit}`} · Todos los precios incluyen IVA.
             </p>
             <div className="flex flex-wrap items-center gap-4">
-              <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener" className="underline hover:text-white">
+              <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener" className="underline hover:text-brand-accent">
                 Defensa de las y los Consumidores
               </a>
               {/* Obligatorio (Res. 424/2020): botón de arrepentimiento visible */}
-              <Link href="/arrepentimiento" className="border border-white px-3 py-1.5 font-semibold uppercase tracking-wide text-white hover:bg-white hover:text-brand-ink">
+              <Link href="/arrepentimiento" className="border border-brand-ink px-3 py-1.5 font-semibold uppercase tracking-wide text-brand-ink transition hover:bg-brand-ink hover:text-white">
                 Botón de arrepentimiento
               </Link>
             </div>
