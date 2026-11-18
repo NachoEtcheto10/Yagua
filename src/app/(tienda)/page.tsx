@@ -8,7 +8,6 @@ import { ProductCard } from '@/features/catalog/components/ProductCard'
 import { getBestSellers, getBySport, getNewArrivals, getSports } from '@/features/catalog/queries'
 import { Ambassadors, Players, SponsorsAndAssociations } from '@/features/home/CommunityBlocks'
 import { Hero } from '@/features/home/Hero'
-import { ParallaxHero } from '@/features/home/ParallaxHero'
 import { Litoral } from '@/features/home/Litoral'
 import { ProductTabs } from '@/features/home/ProductTabs'
 import { CampaignCarousel } from '@/features/home/CampaignCarousel'
@@ -18,9 +17,6 @@ import { KingFishing } from '@/features/home/KingFishing'
 import { getActiveCampaigns, getCommunity } from '@/features/home/queries'
 
 export const revalidate = 300
-
-// Portada de prueba con parallax (capas). Para volver a la de fotos que pasan: false
-const USE_PARALLAX_HERO = true
 
 // Punto de la foto que tiene que quedar a la vista en las tarjetas de deporte (por defecto, el centro)
 const CARD_FOCUS: Record<string, string> = {
@@ -43,7 +39,7 @@ export default async function HomePage() {
   return (
     <>
       {/* 1. Hero */}
-      {USE_PARALLAX_HERO ? <ParallaxHero /> : <Hero />}
+      <Hero />
 
       {/* 2. Accesos por deporte */}
       <section id="deportes" className="scroll-mt-20 py-16 lg:py-24">
