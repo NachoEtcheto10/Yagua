@@ -34,7 +34,7 @@ const SPORTS = [
   {
     slug: 'padel', name: 'Pádel', tagline: 'Moda + Rendimiento',
     description: 'Paletas Yamaha, paleteros, pelotas e indumentaria para dominar el blindex.',
-    heroImage: '/sports/padel.webp', cardImage: '/sports/padel-2.webp',
+    heroImage: '/sports/padel.webp', cardImage: '/real/padel-abasto.webp',
     categories: [['paletas', 'Paletas'], ['paleteros', 'Paleteros'], ['pelotas', 'Pelotas'], ['indumentaria', 'Indumentaria']],
   },
   {
@@ -58,19 +58,19 @@ const SPORTS = [
   {
     slug: 'king-fishing', name: 'King Fishing', tagline: 'Pesca y aventura',
     description: 'La línea de pesca y aventura: indumentaria técnica NeoDry con protección UV, bolsos estancos y equipos para el río.',
-    heroImage: '/sports/pesca.webp', cardImage: '/sports/pesca-2.webp', isSubBrand: true,
+    heroImage: '/sports/pesca.webp', cardImage: '/real/pesca-dueno.webp', isSubBrand: true,
     categories: [['indumentaria', 'Indumentaria técnica'], ['accesorios', 'Bolsos y accesorios'], ['canas', 'Cañas'], ['reeles', 'Reeles'], ['senuelos', 'Señuelos']],
   },
   {
     slug: 'ninos', name: 'Niños', tagline: 'Para los que no paran',
     description: 'Remeras con protección UV, calzas, vestidos y buzos para los más chicos.',
-    heroImage: '/campaigns/ninos.webp', cardImage: '/products/tn/remera-upf-nina-manga-larga-proteccion-uv-y-secado-rapido-llkq8-1.webp',
+    heroImage: '/campaigns/ninos.webp', cardImage: '/real/ninos-uv.webp',
     categories: [['remeras', 'Remeras'], ['calzas', 'Calzas'], ['shorts', 'Shorts'], ['vestidos', 'Vestidos'], ['buzos', 'Buzos']],
   },
   {
     slug: 'accesorios', name: 'Accesorios', tagline: 'Los detalles suman',
     description: 'Gorras, medias, bolsos, todo para la playa, anteojos y botellas.',
-    heroImage: '/products/accesorios-medias-gorra.webp', cardImage: '/products/accesorios-medias-gorra.webp',
+    heroImage: '/products/accesorios-medias-gorra.webp', cardImage: '/real/gorra-beige.webp',
     categories: [['gorras', 'Gorras'], ['medias', 'Medias'], ['bolsos', 'Bolsos'], ['playa', 'Playa y verano'], ['anteojos', 'Anteojos de sol'], ['botellas', 'Botellas']],
   },
 ] as const

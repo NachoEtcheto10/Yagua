@@ -19,7 +19,9 @@ export const revalidate = 300
 
 // Punto de la foto que tiene que quedar a la vista en las tarjetas de deporte (por defecto, el centro)
 const CARD_FOCUS: Record<string, string> = {
-  ninos: 'object-top', // que se vea la cara de la nena entera
+  ninos: 'object-[50%_32%]', // la foto tiene un título arriba: se muestra la cara del nene, no el título
+  accesorios: 'object-[50%_25%]', // la gorra y la cara
+  padel: 'object-[50%_35%]',
 }
 
 export default async function HomePage() {
@@ -60,7 +62,7 @@ export default async function HomePage() {
                   <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4 lg:p-6">
                     <div>
                       <p className="hidden text-sm text-white/80 sm:block">{s.tagline}</p>
-                      <p className="font-display text-3xl font-black uppercase italic leading-none text-white lg:text-5xl">{s.name}</p>
+                      <p className={`font-display text-3xl font-black uppercase italic leading-none text-white ${big ? 'lg:text-5xl' : 'lg:text-4xl'}`}>{s.name}</p>
                     </div>
                     <span className="grid h-10 w-10 shrink-0 place-items-center bg-white text-brand-ink transition group-hover:bg-brand-secondary">
                       <ArrowRight size={20} />
@@ -76,8 +78,9 @@ export default async function HomePage() {
 
       {/* Foto que se agranda hasta ocupar la pantalla */}
       <ExpandingMedia
-        src="/sports/tenis.webp"
-        alt="Cancha de polvo de ladrillo vista desde arriba, con un jugador sacando"
+        src="/real/padel-club.webp"
+        alt="Dos jugadores con ropa Yaguá en una cancha de pádel"
+        pos="object-[50%_10%]"
         eyebrow="Hecho para moverte"
         title="Jugá con garra"
         text="Ropa técnica para entrenar, competir y disfrutar cada cancha y cada camino."

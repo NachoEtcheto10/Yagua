@@ -11,8 +11,8 @@ import { buttonClass, Container } from '@/components/ui/Container'
 /* ------------------------------------------------------------------ */
 
 export function ExpandingMedia({
-  src, alt, eyebrow, title, text, cta,
-}: { src: string; alt: string; eyebrow: string; title: string; text: string; cta: { href: string; label: string } }) {
+  src, alt, eyebrow, title, text, cta, pos = 'object-center',
+}: { src: string; alt: string; eyebrow: string; title: string; text: string; cta: { href: string; label: string }; pos?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end end'] })
@@ -30,7 +30,7 @@ export function ExpandingMedia({
       <div className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden lg:top-[72px] lg:h-[calc(100svh-72px)]">
         <motion.div style={{ clipPath }} className="absolute inset-0 overflow-hidden">
           <motion.div style={{ scale }} className="absolute inset-0">
-            <Image src={src} alt={alt} fill sizes="100vw" className="object-cover" />
+            <Image src={src} alt={alt} fill sizes="100vw" className={`object-cover ${pos}`} />
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
         </motion.div>
@@ -134,10 +134,10 @@ export function HomeFeatures() {
       eyebrow="Por qué Yaguá"
       title="Cada detalle tiene un motivo"
       features={[
-        { icon: Wind, title: 'Telas técnicas', text: 'Livianas, de secado rápido y cómodas para moverte. Pensadas para entrenar con calor, correr temprano o jugar el tercer set.', image: '/sports/running-2.webp', alt: 'Corredor en pleno salto con ropa deportiva' },
-        { icon: PenTool, title: 'Diseño propio', text: 'Cada colección se diseña acá, con la identidad del yaguareté: los ojos, las manchas y los colores de la marca.', image: '/products/camiseta-dry-celeste-modelo.webp', alt: 'Camiseta Dry de Yaguá' },
-        { icon: Shirt, title: 'Personalizados para tu equipo', text: 'Camisetas con tus colores, escudo, nombres y números. Mientras más prendas, mejor precio.', image: '/custom/equipos.webp', alt: 'Camisetas personalizadas para equipos' },
-        { icon: MapPin, title: 'Hecho en el litoral', text: 'Somos de Concepción del Uruguay. Ropa para la gente del río, del club y de la ruta, con envíos a todo el país.', image: '/sports/nautica-2.webp', alt: 'El río Uruguay al atardecer' },
+        { icon: Wind, title: 'Telas técnicas', text: 'Livianas, de secado rápido y cómodas para moverte. Pensadas para entrenar con calor, correr temprano o jugar el tercer set.', image: '/real/camiseta-lima.webp', alt: 'Camiseta deportiva Yaguá color lima, de frente y de espalda' },
+        { icon: PenTool, title: 'Diseño propio', text: 'Cada colección se diseña acá, con la identidad del yaguareté: los ojos, las manchas y los colores de la marca.', image: '/real/bolso-ojos.webp', alt: 'Bolso Yaguá negro con los ojos del yaguareté' },
+        { icon: Shirt, title: 'Personalizados para tu equipo', text: 'Camisetas con tus colores, escudo, nombres y números. Mientras más prendas, mejor precio.', image: '/real/equipo-parque-sur.webp', alt: 'Equipo personalizado de Parque Sur: camiseta, short y medias' },
+        { icon: MapPin, title: 'Hecho en el litoral', text: 'Somos de Concepción del Uruguay. Ropa para la gente del río, del club y de la ruta, con envíos a todo el país.', image: '/real/pesca-dueno.webp', alt: 'Pescando con mosca en el río con campera Yaguá' },
       ]}
     />
   )

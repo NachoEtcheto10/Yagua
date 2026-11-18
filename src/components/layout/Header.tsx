@@ -206,7 +206,7 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
                 </ul>
               </div>
               <Link href={`/${hovered.slug}`} className="group relative block aspect-[3/4] w-[300px] overflow-hidden bg-brand-mist">
-                <Image src={hovered.cardImage} alt={hovered.name} fill sizes="300px" className="object-cover object-top transition duration-700 group-hover:scale-105" />
+                <Image src={hovered.cardImage} alt={hovered.name} fill sizes="300px" className="object-cover transition duration-700 group-hover:scale-105" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 <span className="absolute inset-x-5 bottom-5 font-display text-2xl font-extrabold uppercase leading-none text-white">
                   {hovered.tagline ?? hovered.name}
