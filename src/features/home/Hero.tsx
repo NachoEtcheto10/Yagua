@@ -23,22 +23,8 @@ const SLIDES = [
 ]
 const SLIDE_MS = 5500
 
-export function Hero() {
-  const ref = useRef<HTMLElement>(null)
-  const reduce = useReducedMotion()
-  const [i, setI] = useState(0)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', reduce ? '0%' : '30%'])
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, reduce ? 1 : 0])
-
-  useEffect(() => {
-    if (VIDEO || reduce) return
-    // Un temporizador por foto: si la persona toca una rayita, esa foto dura su tiempo completo
-    const t = setTimeout(() => setI((n) => (n + 1) % SLIDES.length), SLIDE_MS)
-    return () => clearTimeout(t)
-  }, [i, reduce])
-
-  // Con tocar apenas la rueda (o deslizar un poco el dedo) desde la portada, baja sola hasta "Elegí tu deporte"
+/** Con tocar apenas la rueda (o deslizar un poco el dedo) desde la portada, baja sola hasta "Elegí tu deporte" */
+export function useHeroAutoScroll(reduce: boolean | null, duration = 1.3) {
   useEffect(() => {
     if (reduce) return
     let busy = false
@@ -50,10 +36,10 @@ export function Hero() {
       const el = document.getElementById('deportes')
       const y = el ? el.getBoundingClientRect().top + window.scrollY - 72 : window.innerHeight
       const lenis = getLenis()
-      if (lenis) lenis.scrollTo(y, { duration: 1.3, lock: true, force: true, onComplete: () => { busy = false } })
+      if (lenis) lenis.scrollTo(y, { duration, lock: true, force: true, onComplete: () => { busy = false } })
       else {
         window.scrollTo({ top: y, behavior: 'smooth' })
-        setTimeout(() => { busy = false }, 1200)
+        setTimeout(() => { busy = false }, duration * 1000)
       }
     }
     const onWheel = (e: WheelEvent) => {
@@ -78,7 +64,25 @@ export function Hero() {
       window.removeEventListener('touchmove', onTouchMove)
       window.removeEventListener('keydown', onKey)
     }
-  }, [reduce])
+  }, [reduce, duration])
+}
+
+export function Hero() {
+  const ref = useRef<HTMLElement>(null)
+  const reduce = useReducedMotion()
+  const [i, setI] = useState(0)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', reduce ? '0%' : '30%'])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, reduce ? 1 : 0])
+
+  useEffect(() => {
+    if (VIDEO || reduce) return
+    // Un temporizador por foto: si la persona toca una rayita, esa foto dura su tiempo completo
+    const t = setTimeout(() => setI((n) => (n + 1) % SLIDES.length), SLIDE_MS)
+    return () => clearTimeout(t)
+  }, [i, reduce])
+
+  useHeroAutoScroll(reduce)
 
   const appear = (delay: number) =>
     reduce ? {} : { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { delay, duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } }
