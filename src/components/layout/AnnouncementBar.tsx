@@ -1,16 +1,20 @@
 'use client'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ANNOUNCEMENTS } from '@/lib/site'
 
 export function AnnouncementBar() {
   const [i, setI] = useState(0)
   const reduce = useReducedMotion()
+  const pathname = usePathname()
   useEffect(() => {
     const t = setInterval(() => setI((n) => (n + 1) % ANNOUNCEMENTS.length), 4500)
     return () => clearInterval(t)
   }, [])
+  // En la home la portada ocupa toda la pantalla, sin barra arriba
+  if (pathname === '/') return null
   return (
     <div className="relative h-9 overflow-hidden bg-brand-secondary text-brand-ink" aria-live="polite">
       <AnimatePresence mode="wait" initial={false}>

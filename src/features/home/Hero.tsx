@@ -39,7 +39,7 @@ export function Hero() {
     reduce ? {} : { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { delay, duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } }
 
   return (
-    <section ref={ref} className="relative flex h-[calc(100svh-100px)] min-h-[560px] flex-col overflow-hidden bg-brand-primary text-white lg:h-[calc(100svh-108px)]">
+    <section ref={ref} className="relative flex h-svh min-h-[560px] flex-col overflow-hidden bg-brand-primary text-white">
       {/* Fondo: video o fotos que se van pasando */}
       <div className="absolute inset-0">
         {VIDEO ? (
@@ -72,6 +72,12 @@ export function Hero() {
 
       {/* Contenido */}
       <motion.div style={{ y: contentY, opacity: contentOpacity }} className="relative mx-auto flex w-full max-w-[1440px] flex-1 flex-col px-4 sm:px-6 lg:px-10">
+        {/* Logo arriba (la barra de menú aparece recién al deslizar). Placa blanca: los ojos van en negro */}
+        <motion.div {...appear(0.05)} className="pt-5 lg:pt-8">
+          <Link href="/" aria-label="Yaguá, inicio" className="inline-block bg-white px-4 py-2.5">
+            <Image src="/brand/yagua-logo.svg" alt="Yaguá" width={104} height={45} priority className="h-9 w-auto lg:h-11" />
+          </Link>
+        </motion.div>
         <div className="flex flex-1 items-center">
           <h1 className="font-display text-[3.4rem] font-extrabold leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl xl:text-[8.5rem]">
             {[['Mirada', ''], ['de', ''], ['yaguá.', 'text-brand-secondary']].map(([w, c], k) => (

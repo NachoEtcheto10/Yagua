@@ -66,10 +66,34 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
     document.body.style.overflow = mobile ? 'hidden' : ''
   }, [mobile])
 
+  // En la home la portada ocupa toda la pantalla: la barra arranca escondida y baja al deslizar
+  const overlay = pathname === '/'
+  const [shown, setShown] = useState(false)
+  useEffect(() => {
+    if (!overlay) return
+    const onScroll = () => {
+      const show = window.scrollY > window.innerHeight * 0.45
+      setShown(show)
+      if (!show) setHover(null)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [overlay])
+  const hidden = overlay && !shown && !mobile
+
   const hovered = sports.find((s) => s.slug === hover)
 
   return (
-    <header className="sticky top-0 z-40 border-b border-brand-line bg-white" onMouseLeave={() => setHover(null)}>
+    <header
+      className={cn(
+        'top-0 z-40 border-b border-brand-line bg-white',
+        overlay ? 'fixed inset-x-0 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.25)] transition-[translate,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]' : 'sticky',
+        hidden && '-translate-y-full opacity-0',
+      )}
+      onMouseLeave={() => setHover(null)}
+      onFocusCapture={() => overlay && setShown(true)}
+    >
       <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-4 px-4 sm:px-6 lg:h-[72px] lg:px-10">
         <button type="button" onClick={() => setMobile(true)} className="-ml-2 grid h-10 w-10 place-items-center xl:hidden" aria-label="Abrir menú">
           <Menu size={24} />
