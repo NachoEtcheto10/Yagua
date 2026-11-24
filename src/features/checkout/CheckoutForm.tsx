@@ -132,8 +132,21 @@ export function CheckoutForm({ mpEnabled, defaults }: { mpEnabled: boolean; defa
     cn('flex cursor-pointer items-start gap-3 border-2 p-4 transition', active ? 'border-brand-ink bg-brand-mist' : 'border-brand-line hover:border-brand-ink/40')
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
-      <form ref={formRef} onSubmit={submit} noValidate>
+    // [&>*]:min-w-0: sin esto, un nombre de producto largo en el resumen ensancha la página en el celular
+    <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16 [&>*]:min-w-0">
+      <form
+        ref={formRef}
+        noValidate
+        onSubmit={(e) => {
+          // Sólo se confirma el pedido desde el último paso. Antes (ej. "Ir" en el teclado del celular), avanza
+          if (step < 2) {
+            e.preventDefault()
+            void next()
+            return
+          }
+          void submit(e)
+        }}
+      >
         {/* Pasos */}
         <ol className="mb-8 flex items-center gap-2">
           {STEPS.map((s, i) => (
@@ -278,10 +291,13 @@ export function CheckoutForm({ mpEnabled, defaults }: { mpEnabled: boolean; defa
           {step > 0 ? (
             <button type="button" onClick={() => setStep(step - 1)} className="py-2 text-sm font-semibold underline underline-offset-4">Volver</button>
           ) : <span className="hidden sm:block" />}
+          {/* key distinta: tienen que ser dos botones distintos en la página. Si React reusa el mismo, al
+              pasar del paso 2 al 3 el botón se vuelve "submit" en medio del toque y el pedido se confirma
+              solo, sin mostrar el paso de pago */}
           {step < 2 ? (
-            <button type="button" onClick={next} className={cn(buttonClass.primary, 'w-full sm:w-auto')}>Continuar</button>
+            <button key="next" type="button" onClick={next} className={cn(buttonClass.primary, 'w-full sm:w-auto')}>Continuar</button>
           ) : (
-            <button type="submit" disabled={pending} className={cn(buttonClass.primary, 'w-full disabled:opacity-60 sm:w-auto')}>
+            <button key="submit" type="submit" disabled={pending} className={cn(buttonClass.primary, 'w-full disabled:opacity-60 sm:w-auto')}>
               <Lock size={18} /> {pending ? 'Procesando…' : paymentMethod === 'MERCADOPAGO' ? 'Pagar con Mercado Pago' : 'Confirmar pedido'}
             </button>
           )}
