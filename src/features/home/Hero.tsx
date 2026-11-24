@@ -1,6 +1,6 @@
 'use client'
 import { ArrowRight } from 'lucide-react'
-import Image, { getImageProps } from 'next/image'
+import { getImageProps } from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getLenis } from '@/components/ui/SmoothScroll'
@@ -164,14 +164,13 @@ export function Hero() {
       {/* Bloque de texto: abajo en el celular, centrado verticalmente en compu */}
       <div className="relative mx-auto flex h-full w-full max-w-[1440px] flex-col justify-end px-4 pb-28 pt-24 sm:px-6 md:justify-center md:pb-24 lg:px-10">
         <div className="max-w-[560px]">
-          {/* Ojos de la marca con su parpadeo. En compu, arriba del título; en el celular van en la barra,
-              al lado de YAGUÁ (solos en una fila quedaban en el medio de la foto, encima de la persona) */}
-          <Image src="/brand/yagua-eyes.svg" alt="" width={140} height={40} priority className="hidden h-12 w-auto origin-center animate-blink motion-reduce:animate-none md:block lg:h-16" />
-          <h1 className="font-display text-[clamp(3rem,7vw,6rem)] font-extrabold leading-none tracking-tight md:mt-5">
-            Mirada de <span className="text-brand-secondary">yaguá.</span>
+          {/* Título: la palabra de la marca, como en el logo (letras separadas). Los ojos van sólo en la barra,
+              al lado de YAGUÁ: con contorno negro no se veían sobre las fotos oscuras del hero */}
+          <h1 className="font-display text-[clamp(3.25rem,8vw,7rem)] font-extrabold uppercase leading-none tracking-[0.18em]">
+            Yaguá
           </h1>
           <p className="mt-5 text-[17px] leading-relaxed text-white/85 md:text-lg">
-            Ropa y equipamiento para entrenar, jugar y salir al río. Hecho en Concepción del Uruguay, con la garra del litoral.
+            La ropa adecuada para tus deportes. Hecho en Concepción del Uruguay, con la garra del litoral.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link

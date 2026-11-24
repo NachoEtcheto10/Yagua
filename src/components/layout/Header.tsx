@@ -102,11 +102,11 @@ export function Header({ sports, userName }: { sports: NavSport[]; userName: str
         )}
 
         {overlay && !solid ? (
-          // Sobre la portada: la palabra en blanco. En el celular, al lado, los ojos originales (contorno negro,
-          // la marca no quiere la versión blanca) con su parpadeo; en compu los ojos están en el hero, arriba del título
+          // Sobre la portada: la palabra en blanco y, al lado, los ojos originales (contorno negro, la marca no
+          // quiere la versión blanca) con su parpadeo. Es el único lugar del hero donde van los ojos
           <Link href="/" className="mr-auto flex h-11 shrink-0 items-center gap-3 xl:mr-0" aria-label="Yaguá, ir al inicio">
             <span className="font-display text-lg font-extrabold tracking-[0.3em] lg:text-xl">YAGUÁ</span>
-            <Image src="/brand/yagua-eyes.svg" alt="" width={84} height={24} priority className="h-6 w-auto origin-center animate-blink motion-reduce:animate-none md:hidden" />
+            <Image src="/brand/yagua-eyes.svg" alt="" width={84} height={24} priority className="h-6 w-auto origin-center animate-blink motion-reduce:animate-none lg:h-7" />
           </Link>
         ) : overlay ? (
           <Link href="/" className="mr-auto shrink-0 xl:mr-0" aria-label="Yaguá, ir al inicio">
