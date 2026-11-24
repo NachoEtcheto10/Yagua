@@ -170,7 +170,7 @@ export function Hero() {
             Yaguá
           </h1>
           <p className="mt-5 text-[17px] leading-relaxed text-white/85 md:text-lg">
-            La ropa adecuada para tus deportes. Hecho en Concepción del Uruguay, con la garra del litoral.
+            Encontrá la ropa adecuada para tus deportes.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
