@@ -26,11 +26,12 @@ type Slide = {
   pos: string
 }
 
+// Orden pedido por el cliente: Pádel, Trekking, Hockey, Pesca, Golf
 const SLIDES: Slide[] = [
-  { label: 'Pesca', href: '/king-fishing', alt: 'Pescador con campera Yaguá mostrando una trucha en el río', src: '/real/pesca-trucha.webp', mobile: '/real/pesca-trucha-m.webp', pos: 'md:object-[60%_40%]' },
   { label: 'Pádel', href: '/padel', alt: 'Jugador de pádel con ropa Yaguá, esperando la pelota en posición de defensa', src: '/real/padel-gugu.webp', mobile: '/real/padel-gugu.webp', pos: 'md:object-[50%_36%]' },
-  { label: 'Hockey', href: '/hockey', alt: 'Jugadora de hockey llevando la bocha en una cancha de noche', src: '/real/hero-hockey.webp', mobile: '/real/hero-hockey-m.webp', pos: 'md:object-right' },
   { label: 'Trekking', href: '/trekking', alt: 'Persona haciendo trekking entre las piedras de un río de montaña', src: '/real/hero-trekking.webp', mobile: '/real/hero-trekking-m.webp', pos: 'md:object-right' },
+  { label: 'Hockey', href: '/hockey', alt: 'Jugadora de hockey llevando la bocha en una cancha de noche', src: '/real/hero-hockey.webp', mobile: '/real/hero-hockey-m.webp', pos: 'md:object-right' },
+  { label: 'Pesca', href: '/king-fishing', alt: 'Pescador con campera Yaguá mostrando una trucha en el río', src: '/real/pesca-trucha.webp', mobile: '/real/pesca-trucha-m.webp', pos: 'md:object-[60%_40%]' },
   { label: 'Golf', href: '/golf', alt: 'Golfista terminando el swing en la cancha al atardecer', src: '/real/hero-golf.webp', mobile: '/real/hero-golf-m.webp', pos: 'md:object-right' },
 ]
 const SLIDE_MS = 6000
@@ -163,9 +164,10 @@ export function Hero() {
       {/* Bloque de texto: abajo en el celular, centrado verticalmente en compu */}
       <div className="relative mx-auto flex h-full w-full max-w-[1440px] flex-col justify-end px-4 pb-28 pt-24 sm:px-6 md:justify-center md:pb-24 lg:px-10">
         <div className="max-w-[560px]">
-          {/* Ojos de la marca con su parpadeo */}
-          <Image src="/brand/yagua-eyes.svg" alt="" width={140} height={40} priority className="h-12 w-auto origin-center animate-blink motion-reduce:animate-none lg:h-16" />
-          <h1 className="mt-5 font-display text-[clamp(3rem,7vw,6rem)] font-extrabold leading-none tracking-tight">
+          {/* Ojos de la marca con su parpadeo. En compu, arriba del título; en el celular van en la barra,
+              al lado de YAGUÁ (solos en una fila quedaban en el medio de la foto, encima de la persona) */}
+          <Image src="/brand/yagua-eyes.svg" alt="" width={140} height={40} priority className="hidden h-12 w-auto origin-center animate-blink motion-reduce:animate-none md:block lg:h-16" />
+          <h1 className="font-display text-[clamp(3rem,7vw,6rem)] font-extrabold leading-none tracking-tight md:mt-5">
             Mirada de <span className="text-brand-secondary">yaguá.</span>
           </h1>
           <p className="mt-5 text-[17px] leading-relaxed text-white/85 md:text-lg">

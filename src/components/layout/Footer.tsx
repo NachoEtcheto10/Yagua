@@ -24,8 +24,9 @@ export function Footer({ sports }: { sports: NavSport[] }) {
       <Newsletter />
       <div className="relative border-t border-brand-line bg-brand-mist text-brand-ink">
         <Rosettes tone="light" className="opacity-[0.05]" />
-        <div className="relative mx-auto grid max-w-[1440px] gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1.4fr] lg:px-10">
-          <div>
+        {/* En el celular: Deportes y Ayuda lado a lado y sin el mapa embebido, para que el pie sea corto */}
+        <div className="relative mx-auto grid max-w-[1440px] grid-cols-2 gap-x-6 gap-y-10 px-4 py-12 sm:gap-10 sm:px-6 sm:py-14 lg:grid-cols-[1.2fr_1fr_1fr_1.4fr] lg:px-10">
+          <div className="col-span-2 sm:col-span-1">
             {/* Logo original: ojos con contorno negro, sobre el fondo claro */}
             <Image src="/brand/yagua-logo.svg" alt="Yaguá" width={130} height={56} className="h-12 w-auto" />
             <p className="mt-5 max-w-xs text-sm text-brand-muted">{SITE.description}</p>
@@ -57,14 +58,22 @@ export function Footer({ sports }: { sports: NavSport[] }) {
             </ul>
           </nav>
 
-          <div>
+          <div className="col-span-2 sm:col-span-1">
             <h3 className="font-display text-lg font-bold uppercase tracking-wide">Visitanos</h3>
             <ul className="mt-4 space-y-3 text-sm text-brand-ink/75">
               <li className="flex gap-2"><MapPin size={18} className="mt-0.5 shrink-0 text-brand-ink" /> {SITE.address} · {SITE.city}</li>
               <li className="flex gap-2"><Clock size={18} className="mt-0.5 shrink-0 text-brand-ink" /> {SITE.hours}</li>
               <li className="flex gap-2"><MessageCircle size={18} className="mt-0.5 shrink-0 text-brand-ink" /> <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener" className="hover:text-brand-accent">{SITE.whatsappDisplay}</a></li>
             </ul>
-            <div className="mt-4 aspect-[16/9] overflow-hidden bg-brand-line">
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SITE.mapsQuery)}`}
+              target="_blank"
+              rel="noopener"
+              className="mt-4 inline-flex items-center gap-2 border border-brand-ink px-4 py-2 text-sm font-semibold uppercase tracking-wide transition hover:bg-brand-ink hover:text-white sm:hidden"
+            >
+              <MapPin size={16} /> Cómo llegar
+            </a>
+            <div className="mt-4 hidden aspect-[16/9] overflow-hidden bg-brand-line sm:block">
               <iframe
                 title="Mapa del local de Yaguá"
                 loading="lazy"

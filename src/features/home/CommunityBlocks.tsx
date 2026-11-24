@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { AutoRow } from '@/components/ui/AutoRow'
 import { Container, SectionTitle } from '@/components/ui/Container'
 import { Marquee } from '@/components/ui/Marquee'
 import { Reveal } from '@/components/ui/Reveal'
@@ -22,10 +23,11 @@ export function Ambassadors({ ambassadors }: { ambassadors: Community['ambassado
             Conocelos <ArrowRight size={18} />
           </Link>
         </div>
-        <div className="mt-10 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-5">
-          {ambassadors.map((a, i) => (
-            <Reveal key={a.id} delay={i * 0.08}>
-              <Link href={`/comunidad#${a.slug}`} className="group relative block aspect-[3/4] overflow-hidden bg-brand-mist">
+        {/* En el celular, carrusel que avanza solo (para no hacer la página tan larga); en compu, grilla */}
+        <Reveal className="mt-10">
+          <AutoRow label="Embajadores" itemClass="w-[68%]" gridClass="sm:grid-cols-2 sm:gap-3 lg:grid-cols-4 lg:gap-5">
+          {ambassadors.map((a) => (
+              <Link key={a.id} href={`/comunidad#${a.slug}`} className="group relative block aspect-[3/4] overflow-hidden bg-brand-mist">
                 <Image src={a.photo} alt={a.name} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover transition duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-4 text-white lg:p-5">
@@ -39,9 +41,12 @@ export function Ambassadors({ ambassadors }: { ambassadors: Community['ambassado
                   </span>
                 )}
               </Link>
-            </Reveal>
           ))}
-        </div>
+          </AutoRow>
+        </Reveal>
+        <Link href="/comunidad" className="mt-6 flex items-center gap-2 font-semibold underline-offset-4 hover:underline sm:hidden">
+          Conocelos <ArrowRight size={18} />
+        </Link>
       </Container>
     </section>
   )
@@ -53,19 +58,19 @@ export function Players({ players }: { players: Community['players'] }) {
       <Container>
         <SectionTitle light>Vistieron Yaguá</SectionTitle>
         <p className="mt-3 max-w-xl text-white/70">Jugadoras y jugadores que eligieron nuestra ropa para competir.</p>
-        <div className="mt-10 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-          {players.map((p, i) => (
-            <Reveal key={p.id} delay={i * 0.05}>
-              <figure className="group relative aspect-[4/5] overflow-hidden">
+        <Reveal className="mt-10">
+          <AutoRow label="Vistieron Yaguá" itemClass="w-[46%]" gridClass="sm:grid-cols-3 sm:gap-2 lg:grid-cols-6" interval={3000}>
+          {players.map((p) => (
+              <figure key={p.id} className="group relative aspect-[4/5] overflow-hidden">
                 <Image src={p.photo} alt={`${p.name}, ${p.sport}`} fill sizes="(min-width: 1024px) 16vw, 45vw" className="object-cover grayscale transition duration-500 group-hover:scale-105 group-hover:grayscale-0" />
                 <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-3 pt-10">
                   <span className="block font-display text-lg font-bold uppercase leading-none">{p.name}</span>
                   <span className="block text-xs text-white/70">{p.club} · {p.sport}</span>
                 </figcaption>
               </figure>
-            </Reveal>
           ))}
-        </div>
+          </AutoRow>
+        </Reveal>
       </Container>
     </section>
   )

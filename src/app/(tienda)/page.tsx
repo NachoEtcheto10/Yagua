@@ -5,14 +5,12 @@ import { Carousel } from '@/components/ui/Carousel'
 import { Container, SectionTitle, buttonClass } from '@/components/ui/Container'
 import { Reveal } from '@/components/ui/Reveal'
 import { ProductCard } from '@/features/catalog/components/ProductCard'
-import { getBestSellers, getBySport, getNewArrivals, getSports } from '@/features/catalog/queries'
+import { getBestSellers, getNewArrivals, getSports } from '@/features/catalog/queries'
 import { Ambassadors, Players, SponsorsAndAssociations } from '@/features/home/CommunityBlocks'
 import { Hero } from '@/features/home/Hero'
 import { ProductTabs } from '@/features/home/ProductTabs'
 import { CampaignCarousel } from '@/features/home/CampaignCarousel'
 import { Collaborations } from '@/features/home/Collaborations'
-import { HomeFeatures } from '@/features/home/Scrolly'
-import { KingFishing } from '@/features/home/KingFishing'
 import { getActiveCampaigns, getCommunity } from '@/features/home/queries'
 
 export const revalidate = 300
@@ -25,11 +23,10 @@ const CARD_FOCUS: Record<string, string> = {
 }
 
 export default async function HomePage() {
-  const [sports, newArrivals, bestSellers, kingFishing, campaigns, community] = await Promise.all([
+  const [sports, newArrivals, bestSellers, campaigns, community] = await Promise.all([
     getSports(),
     getNewArrivals(10),
     getBestSellers(10),
-    getBySport('king-fishing', 8),
     getActiveCampaigns(),
     getCommunity(),
   ])
@@ -60,11 +57,12 @@ export default async function HomePage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4 lg:p-6">
-                    <div>
+                    <div className="min-w-0">
                       <p className="hidden text-sm text-white/80 sm:block">{s.tagline}</p>
-                      <p className={`font-display text-3xl font-black uppercase italic leading-none text-white ${big ? 'lg:text-5xl' : 'lg:text-4xl'}`}>{s.name}</p>
+                      {/* en el celular la tarjeta es angosta: texto más chico para que entren nombres largos (ACCESORIOS) */}
+                      <p className={`font-display text-xl font-black uppercase italic leading-none text-white sm:text-3xl ${big ? 'lg:text-5xl' : 'lg:text-4xl'}`}>{s.name}</p>
                     </div>
-                    <span className="grid h-10 w-10 shrink-0 place-items-center bg-white text-brand-ink transition group-hover:bg-brand-secondary">
+                    <span className="hidden h-10 w-10 shrink-0 place-items-center bg-white text-brand-ink transition group-hover:bg-brand-secondary sm:grid">
                       <ArrowRight size={20} />
                     </span>
                   </div>
@@ -118,13 +116,7 @@ export default async function HomePage() {
       {/* 4b. Colaboraciones: FAP × Yaguá */}
       <Collaborations />
 
-      {/* Por qué Yaguá: foto fija que cambia con cada característica */}
-      <HomeFeatures />
-
-      {/* 5. King Fishing: pesca y aventura (indumentaria Kiiing Adventure) */}
-      <KingFishing products={kingFishing} />
-
-      {/* 6. Personalizados para equipos */}
+      {/* 5. Personalizados para equipos */}
       <section className="py-16 lg:py-24">
         <Container>
           <div className="grid overflow-hidden bg-brand-mist lg:grid-cols-2">
