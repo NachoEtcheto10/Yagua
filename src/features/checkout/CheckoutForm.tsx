@@ -4,9 +4,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Banknote, Check, CreditCard, Landmark, Lock, Store, Truck } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { useForm, type FieldPath } from 'react-hook-form'
 import { buttonClass } from '@/components/ui/Container'
+import { getLenis } from '@/components/ui/SmoothScroll'
 import { cartSubtotal, useCart } from '@/features/cart/store'
 import { cn, formatPrice } from '@/lib/format'
 import { COMMERCE } from '@/lib/site'
@@ -54,6 +55,19 @@ export function CheckoutForm({ mpEnabled, defaults }: { mpEnabled: boolean; defa
   const { register, watch, trigger, setValue, formState: { errors } } = form
 
   useEffect(() => setMounted(true), [])
+
+  // Al cambiar de paso, si el principio del formulario quedó arriba de la pantalla (pasa en el celular,
+  // porque el botón está abajo de todo), sube hasta ahí para que se vea el paso nuevo desde el principio
+  const formRef = useRef<HTMLFormElement>(null)
+  const firstStep = useRef(true)
+  useEffect(() => {
+    if (firstStep.current) { firstStep.current = false; return }
+    const el = formRef.current
+    if (!el || el.getBoundingClientRect().top >= 72) return
+    const lenis = getLenis()
+    if (lenis) lenis.scrollTo(el, { offset: -96 })
+    else window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 96, behavior: 'smooth' })
+  }, [step])
   const lines = useMemo(() => items.map((i) => ({ variantId: i.variantId, quantity: i.quantity })), [items])
 
   useEffect(() => {
@@ -119,7 +133,7 @@ export function CheckoutForm({ mpEnabled, defaults }: { mpEnabled: boolean; defa
 
   return (
     <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
-      <form onSubmit={submit} noValidate>
+      <form ref={formRef} onSubmit={submit} noValidate>
         {/* Pasos */}
         <ol className="mb-8 flex items-center gap-2">
           {STEPS.map((s, i) => (
@@ -253,14 +267,21 @@ export function CheckoutForm({ mpEnabled, defaults }: { mpEnabled: boolean; defa
 
         {serverError && <p role="alert" className="mt-6 border-l-4 border-brand-accent bg-brand-accent/10 p-3 text-sm font-semibold">{serverError}</p>}
 
-        <div className="mt-8 flex items-center justify-between gap-3">
+        {/* En el celular el resumen queda abajo de todo: el total se muestra junto al botón */}
+        <p className="mt-8 flex items-baseline justify-between border-t border-brand-line pt-4 lg:hidden">
+          <span className="text-sm font-semibold">Total{shipping == null ? ' (sin envío)' : ''}</span>
+          <span className="font-display text-2xl font-extrabold tabular-nums">{formatPrice(total)}</span>
+        </p>
+
+        {/* Celular: botón a todo el ancho (fácil con el pulgar) y "Volver" abajo; compu: como antes */}
+        <div className="mt-4 flex flex-col-reverse items-stretch gap-4 sm:mt-8 sm:flex-row sm:items-center sm:justify-between">
           {step > 0 ? (
-            <button type="button" onClick={() => setStep(step - 1)} className="text-sm font-semibold underline underline-offset-4">Volver</button>
-          ) : <span />}
+            <button type="button" onClick={() => setStep(step - 1)} className="py-2 text-sm font-semibold underline underline-offset-4">Volver</button>
+          ) : <span className="hidden sm:block" />}
           {step < 2 ? (
-            <button type="button" onClick={next} className={buttonClass.primary}>Continuar</button>
+            <button type="button" onClick={next} className={cn(buttonClass.primary, 'w-full sm:w-auto')}>Continuar</button>
           ) : (
-            <button type="submit" disabled={pending} className={cn(buttonClass.primary, 'disabled:opacity-60')}>
+            <button type="submit" disabled={pending} className={cn(buttonClass.primary, 'w-full disabled:opacity-60 sm:w-auto')}>
               <Lock size={18} /> {pending ? 'Procesando…' : paymentMethod === 'MERCADOPAGO' ? 'Pagar con Mercado Pago' : 'Confirmar pedido'}
             </button>
           )}

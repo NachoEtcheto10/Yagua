@@ -1,8 +1,9 @@
 'use client'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, CreditCard, Landmark, RotateCcw, ShieldCheck, ShoppingBag, Store } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Price } from '@/components/ui/Price'
+import { getLenis } from '@/components/ui/SmoothScroll'
 import { useCart } from '@/features/cart/store'
 import { effectivePrice, installmentAmount, transferDiscount } from '@/features/checkout/pricing'
 import { cn, formatPrice } from '@/lib/format'
@@ -59,6 +60,29 @@ export function ProductView({ product }: { product: ProductViewData }) {
 
   useEffect(() => addRecent(product.slug), [addRecent, product.slug])
 
+  // Barra fija de compra en el celular: aparece cuando el botón "Agregar al carrito" no está a la vista
+  // (en el celular queda casi dos pantallas más abajo) y se esconde al llegar al pie de página
+  const buyRef = useRef<HTMLDivElement>(null)
+  const sizesRef = useRef<HTMLFieldSetElement>(null)
+  const [showBar, setShowBar] = useState(false)
+  useEffect(() => {
+    const buy = buyRef.current
+    if (!buy) return
+    let buyVisible = true
+    let footerVisible = false
+    const footer = document.querySelector('footer')
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.target === buy) buyVisible = e.isIntersecting
+        else footerVisible = e.isIntersecting
+      }
+      setShowBar(!buyVisible && !footerVisible)
+    })
+    io.observe(buy)
+    if (footer) io.observe(footer)
+    return () => io.disconnect()
+  }, [])
+
   const images = useMemo(() => {
     const own = product.images.filter((i) => i.color === color)
     return own.length ? own : product.images
@@ -92,6 +116,21 @@ export function ProductView({ product }: { product: ProductViewData }) {
     setAdded(true)
     setTimeout(() => setAdded(false), 1800)
   }
+
+  // Desde la barra fija: si falta el talle, lleva a los talles en vez de fallar en silencio
+  const onBarAdd = () => {
+    if (!variant) {
+      setError('Elegí un talle')
+      const target = sizesRef.current
+      if (!target) return
+      const lenis = getLenis()
+      if (lenis) lenis.scrollTo(target, { offset: -120 })
+      else target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+    onAdd()
+  }
+  const soldOut = product.variants.every((v) => v.stock < 1)
 
   // [&>*]:min-w-0: las columnas pueden achicarse más que su contenido (si no, las miniaturas ensanchan la página en el celular)
   return (
@@ -149,7 +188,7 @@ export function ProductView({ product }: { product: ProductViewData }) {
 
         {/* Talle */}
         {!singleSize && (
-          <fieldset className="mt-6">
+          <fieldset ref={sizesRef} className="mt-6">
             <div className="flex items-center justify-between">
               <legend className="text-sm font-semibold">Talle</legend>
               {product.sizeGuide && SIZE_GUIDES[product.sizeGuide] && (
@@ -196,7 +235,7 @@ export function ProductView({ product }: { product: ProductViewData }) {
         </p>
 
         {/* Agregar al carrito */}
-        <div className="mt-3 flex gap-2">
+        <div ref={buyRef} className="mt-3 flex gap-2">
           <select
             value={qty}
             onChange={(e) => setQty(Number(e.target.value))}
@@ -295,6 +334,39 @@ export function ProductView({ product }: { product: ProductViewData }) {
           </div>
         </div>
       </div>
+
+      {/* Barra fija de compra (sólo celular) */}
+      <AnimatePresence>
+        {showBar && (
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="fixed inset-x-0 bottom-0 z-30 border-t border-brand-line bg-white px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.25)] lg:hidden"
+          >
+            <div className="flex items-center gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs text-brand-muted">
+                  {soldOut ? 'Sin stock' : size && !singleSize ? `Talle ${size}` : singleSize ? product.name : 'Elegí tu talle'}
+                </p>
+                <p className="font-display text-xl font-extrabold leading-tight">{formatPrice(price)}</p>
+              </div>
+              <button
+                type="button"
+                onClick={onBarAdd}
+                disabled={soldOut || (!!variant && variant.stock < 1)}
+                className={cn(
+                  'flex h-12 shrink-0 items-center justify-center gap-2 px-5 font-display text-base font-bold uppercase tracking-wide transition disabled:bg-brand-muted',
+                  added ? 'bg-brand-secondary text-brand-ink' : 'bg-brand-primary text-white',
+                )}
+              >
+                {added ? <><Check size={20} /> Agregado</> : <><ShoppingBag size={18} /> {variant || singleSize ? 'Agregar' : 'Elegir talle'}</>}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

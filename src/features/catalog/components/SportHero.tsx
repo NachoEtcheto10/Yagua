@@ -23,7 +23,8 @@ export function SportHero({ sport, categories, activeCategory, title }: Props) {
     <section className={cn('relative overflow-hidden', kf ? 'bg-kf-deep' : 'bg-brand-primary')}>
       <Image src={sport.heroImage} alt="" fill priority sizes="100vw" className={cn('object-cover opacity-70', FOCUS[sport.slug])} />
       <div className={cn('absolute inset-0', kf ? 'bg-gradient-to-t from-kf-deep via-kf-deep/50 to-transparent' : 'bg-gradient-to-t from-black/85 via-black/30 to-black/5')} />
-      <div className="relative mx-auto flex min-h-[60vh] max-w-[1440px] flex-col justify-end px-4 pb-8 pt-24 sm:min-h-[44vh] sm:px-6 lg:min-h-[52vh] lg:px-10 lg:pb-12">
+      {/* En el celular la portada es más baja, para que los productos se vean apenas se entra */}
+      <div className="relative mx-auto flex min-h-[40svh] max-w-[1440px] flex-col justify-end px-4 pb-6 pt-20 sm:min-h-[44vh] sm:px-6 sm:pb-8 sm:pt-24 lg:min-h-[52vh] lg:px-10 lg:pb-12">
         <nav aria-label="Ubicación" className="text-sm text-white/70">
           <Link href="/" className="hover:text-white">Inicio</Link>
           <span className="mx-2">/</span>
@@ -40,9 +41,9 @@ export function SportHero({ sport, categories, activeCategory, title }: Props) {
             <Fish size={18} /> Pesca y náutica by Yaguá
           </p>
         )}
-        <h1 className="mt-2 font-display text-6xl font-black uppercase italic leading-[0.85] text-white sm:text-7xl lg:text-9xl">{title ?? sport.name}</h1>
-        {!activeCategory && sport.description && <p className="mt-4 max-w-xl text-lg text-white/85">{sport.description}</p>}
-        <div className="scrollbar-none -mx-4 mt-8 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+        <h1 className="mt-2 font-display text-5xl font-black uppercase italic leading-[0.85] text-white sm:text-7xl lg:text-9xl">{title ?? sport.name}</h1>
+        {!activeCategory && sport.description && <p className="mt-3 max-w-xl text-base text-white/85 sm:mt-4 sm:text-lg">{sport.description}</p>}
+        <div className="scrollbar-none -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:mt-8 sm:flex-wrap sm:px-0">
           <Link
             href={`/${sport.slug}`}
             className={cn('shrink-0 border px-4 py-2 font-display font-bold uppercase tracking-wide', !activeCategory ? (kf ? 'border-kf-gold bg-kf-gold text-kf-deep' : 'border-white bg-white text-brand-ink') : 'border-white/50 text-white hover:border-white')}

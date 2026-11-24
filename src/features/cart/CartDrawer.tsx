@@ -16,6 +16,8 @@ export function CartDrawer() {
   const [code, setCode] = useState('')
   const [coupon, setCouponInfo] = useState<{ label: string; discount: number } | null>(null)
   const [couponError, setCouponError] = useState<string | null>(null)
+  // El campo del código se abre a pedido: a quien no tiene código no lo distrae ni lo hace dudar
+  const [showCoupon, setShowCoupon] = useState(false)
   const [pending, start] = useTransition()
 
   useEffect(() => setMounted(true), [])
@@ -138,6 +140,10 @@ export function CartDrawer() {
                       <span>Cupón <strong>{couponCode}</strong> ({coupon.label})</span>
                       <button type="button" onClick={() => setCoupon(null)} className="text-brand-muted underline">Quitar</button>
                     </div>
+                  ) : !showCoupon && !couponError ? (
+                    <button type="button" onClick={() => setShowCoupon(true)} className="py-1 text-sm font-semibold underline underline-offset-4">
+                      ¿Tenés un código de descuento?
+                    </button>
                   ) : (
                     <form
                       onSubmit={(e) => {
@@ -160,6 +166,7 @@ export function CartDrawer() {
                         }}
                         placeholder="Código de descuento"
                         aria-label="Código de descuento"
+                        autoFocus={showCoupon}
                         className="h-10 min-w-0 flex-1 border border-brand-line px-3 text-[16px] uppercase outline-none focus:border-brand-ink sm:text-sm"
                       />
                       <button type="submit" disabled={!code || pending} className="h-10 border border-brand-ink px-4 text-sm font-semibold disabled:opacity-40">
